@@ -2,6 +2,7 @@ import turtle
 import math
 from time import *
 import pygame
+from pygame.locals import *
 
 pygame.mixer.init()
 pygame.mixer.music.load("./Music/SoundTest.wav")
@@ -10,7 +11,7 @@ pygame.mixer.music.play(-1)
 wn = turtle.Screen()
 wn.bgcolor("black")
 wn.title("Zombie head adventure")
-wn.setup(700,700)
+wn.setup(1700, 700)
 wn.tracer(0)
 wn.bgpic("./image/giphy.gif")
 
@@ -108,6 +109,22 @@ class Treasure(turtle.Turtle):
         self.goto(2000, 2000)
         self.hideturtle()
 
+# TODO - add input textbox area
+class TextBox:
+    def __init__(self, x=250, y=250, w=300, h=50, pen: turtle.Turtle = None):
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
+        if pen is not None:
+            self.pen = pen
+        else:
+            self.pen = turtle.Turtle
+            self.pen.hideturtle()
+            self.pen.penup()
+            self.pen.color("white")
+                
+        
 # TODO add in moving enemy
 # class Enemy(turtle.Turtle):
 #         def __init__(self,x,y):
@@ -249,7 +266,13 @@ if __name__ == "__main__":
 
     # TODO setup a randomly selected maze
     setup_maze(level_1)
-    turtle.textinput("title", "prompt")
+#     turtle.textinput("title", "prompt")
+    text = 'this text is editable'
+    pygame.init()
+    sysfont = pygame.font.get_default_font()
+    font = pygame.font.SysFont(None, 48)
+
+    img = font.render(text, True, (0, 255, 255))
  
     # TODO turn off keypress and read commands from input
     turtle.listen()
