@@ -3,6 +3,8 @@ import math
 from time import *
 import pygame
 from pygame.locals import *
+import json
+import random
 
 pygame.mixer.init()
 pygame.mixer.music.load("./Music/SoundTest.wav")
@@ -168,35 +170,9 @@ class TextBox:
 #                 self.goto(2000,2000)
 #                 self.hideturtle()
 
-
-# TODO move to external file
-level_1 = [
-"XXXXXXXXXXXXXXXXXXXXXXXXX",
-"X XXXXXXX           XXXXX",
-"X  XXXXXXX  XXXXXX  XXXXX",
-"X           XXXXXX  XXXXX",
-"X       XX  XXX XXX    XX",
-"XX XXXXXXX  XXX    XX  XX",
-"XX XXX  XX  XXXXXX    XXX",
-"XX      XX    XXXX  XXXXX",
-"XXXXXX  XX    XXXXP XXXXX",
-"XX      XXXXXXXXXXXXXXXXX",
-"X  XXXXXXXXXXXXXXXXXXXXXX",
-"X                XXXXXXXX",
-"XXXXXXXXXXXX  T XXX     X",
-"XXXXXXXXXXXXXXX  XXXXX  X",
-"XXX  XXXXXXXXXX         X",
-"XXX                     X",
-"XXX         XXXXXXXXXXXXX",
-"XXXXXXXXXX  XXXXXXXXXXXXX",
-"XXXXXXXXXX             TX",
-"XX T XXXXX              X",
-"XX   XXXXXXXXXXXXX  XXXXX",
-"XX    YXXXXXXXXXXX  XXXXX",
-"XX          XXXX        X",
-"XXXX                    X",
-"XXXXXXXXXXXXXXXXXXXXXXXXX"
-]
+def load_maps():
+    with open('./assets/mazes.json') as w:
+        return json.load(w)
 
 def setup_maze(level):
     for y in range(len(level)):
@@ -265,7 +241,8 @@ if __name__ == "__main__":
     treasures = []
 
     # TODO setup a randomly selected maze
-    setup_maze(level_1)
+    maps = load_maps()
+    setup_maze(random.choice(maps))
 #     turtle.textinput("title", "prompt")
     text = 'this text is editable'
     pygame.init()
