@@ -14,81 +14,101 @@ wn.setup(700,700)
 wn.tracer(0)
 wn.bgpic("./image/giphy.gif")
 
-class  Pen(turtle.Turtle):
-        def  __init__(self):
-                turtle.Turtle.__init__(self)
-                v=self.getscreen()
-                v.register_shape("./image/block.gif")
-                self.shape("./image/block.gif")
-                self.color("white")
-                self.penup()
-                self.speed(3)
+class Pen(turtle.Turtle):
+    """
+    Draws the maze
+
+    Args:
+        turtle (_type_): turtle object
+    """
+    def  __init__(self):
+        turtle.Turtle.__init__(self)
+        v = self.getscreen()
+        v.register_shape("./image/block.gif")
+        self.shape("./image/block.gif")
+        self.color("white")
+        self.penup()
+        self.speed(3)
 
 class Player(turtle.Turtle):
-        def __init__(self):
-                turtle.Turtle.__init__(self)
-                v=self.getscreen()
-                v.register_shape("./image/zombie.gif")
-                self.shape("./image/zombie.gif")
-                self.color("blue")
-                self.penup()
-                self.speed(0)
-                self.gold = 0
+    """
+    Moves the player object
 
-        def go_up(self):
-                move_to_x = player.xcor()
-                move_to_y = player.ycor() + 24
+    Args:
+        turtle (_type_): turtle object
+    """
+    def __init__(self):
+        turtle.Turtle.__init__(self)
+        v = self.getscreen()
+        v.register_shape("./image/zombie.gif")
+        self.shape("./image/zombie.gif")
+        self.color("blue")
+        self.penup()
+        self.speed(0)
+        self.gold = 0
 
-                if (move_to_x, move_to_y) not in walls:
-                        self.goto(move_to_x, move_to_y)
+    def go_up(self):
+        move_to_x = player.xcor()
+        move_to_y = player.ycor() + 24
 
-        def go_down(self):
-                move_to_x = player.xcor()
-                move_to_y = player.ycor() - 24
+        if (move_to_x, move_to_y) not in walls:
+            self.goto(move_to_x, move_to_y)
 
-                if (move_to_x, move_to_y) not in walls:
-                        self.goto(move_to_x, move_to_y)
+    def go_down(self):
+        move_to_x = player.xcor()
+        move_to_y = player.ycor() - 24
 
-        def go_left(self):
-                move_to_x = player.xcor() - 24
-                move_to_y = player.ycor()
+        if (move_to_x, move_to_y) not in walls:
+            self.goto(move_to_x, move_to_y)
 
-                if (move_to_x, move_to_y) not in walls:
-                        self.goto(move_to_x, move_to_y)
+    def go_left(self):
+        move_to_x = player.xcor() - 24
+        move_to_y = player.ycor()
 
-        def go_right(self):
-                move_to_x = player.xcor() + 24
-                move_to_y = player.ycor()
+        if (move_to_x, move_to_y) not in walls:
+            self.goto(move_to_x, move_to_y)
 
-                if (move_to_x, move_to_y) not in walls:
-                        self.goto(move_to_x, move_to_y)
+    def go_right(self):
+        move_to_x = player.xcor() + 24
+        move_to_y = player.ycor()
 
-        def is_collision(self, other):
-                a = self.xcor()-other.xcor()
-                b = self.ycor()-other.ycor()
-                distance = math.sqrt((a**2)+(b**2))
+        if (move_to_x, move_to_y) not in walls:
+            self.goto(move_to_x, move_to_y)
 
-                if distance < 5:
-                        return True
-                else:
-                        return False
+    # TODO - use collision
+    def is_collision(self, other):
+        a = self.xcor()-other.xcor()
+        b = self.ycor()-other.ycor()
+        distance = math.sqrt((a**2)+(b**2))
+
+        if distance < 5:
+            return True
+        else:
+            return False
 
 class Treasure(turtle.Turtle):
-        def __init__(self, x, y):
-                turtle.Turtle.__init__(self)
-                v=self.getscreen()
-                v.register_shape("./image/treasure.gif")
-                self.shape("./image/treasure.gif")
-                self.color("gold")
-                self.penup()
-                self.speed(0)
-                self.gold = 100
-                self.goto(x,y)
+    """
+    A treasure object
 
-        def destroy(self):
-                self.goto(2000, 2000)
-                self.hideturtle()
+    Args:
+        turtle (_type_): turtle object
+    """
+    def __init__(self, x, y):
+        turtle.Turtle.__init__(self)
+        v = self.getscreen()
+        v.register_shape("./image/treasure.gif")
+        self.shape("./image/treasure.gif")
+        self.color("gold")
+        self.penup()
+        self.speed(0)
+        self.gold = 100
+        self.goto(x,y)
 
+    def destroy(self):
+        self.goto(2000, 2000)
+        self.hideturtle()
+
+# TODO add in moving enemy
 # class Enemy(turtle.Turtle):
 #         def __init__(self,x,y):
 #                 turtle.Turtle.__init__(self)
@@ -131,8 +151,8 @@ class Treasure(turtle.Turtle):
 #                 self.goto(2000,2000)
 #                 self.hideturtle()
 
-level = [""]
 
+# TODO move to external file
 level_1 = [
 "XXXXXXXXXXXXXXXXXXXXXXXXX",
 "X XXXXXXX           XXXXX",
@@ -161,26 +181,23 @@ level_1 = [
 "XXXXXXXXXXXXXXXXXXXXXXXXX"
 ]
 
-treasures = []
-
-level.append(level_1)
-
 def setup_maze(level):
-        for y in range(len(level)):
-                for x in range(len(level[y])):
-                        character = level[y][x]
-                        screen_x = -288 + (x *24)
-                        screen_y = 288 - (y * 24)
+    for y in range(len(level)):
+        for x in range(len(level[y])):
+            character = level[y][x]
+            maze_x = -288 + (x * 24)
+            maze_y = 288 - (y * 24)
 
-                        if character =="X":
-                                pen.goto(screen_x, screen_y)
-                                pen.stamp()
-                                walls.append((screen_x, screen_y))
-                        elif character=="P":
-                                player.goto(screen_x, screen_y)
-                        elif character =="T":
-                                treasures.append(Treasure(screen_x,screen_y))
+            if character == "X":
+                pen.goto(maze_x, maze_y)
+                pen.stamp()
+                walls.append((maze_x, maze_y))
+            elif character == "P":
+                player.goto(maze_x, maze_y)
+            elif character == "T":
+                treasures.append(Treasure(maze_x, maze_y))
 
+# TODO This needs a refactor!! Is it needed...
 def Starttime():
         treasure.destroy()
         treasures.remove(treasure)
@@ -188,7 +205,6 @@ def Starttime():
 
         pygame.mixer.music.load("./Music/Gameover.wav")
         pygame.mixer.music.play(4)
-
 
         start_timer = time()
 
@@ -223,39 +239,43 @@ def Starttime():
         pygame.mixer.music.play(-1)
         turtle.clear()
 
-        
 
-pen= Pen()
-player = Player()
+if __name__ == "__main__":
 
-walls = []
+    pen = Pen()
+    player = Player()
+    walls = []
+    treasures = []
 
-setup_maze(level[1])
+    # TODO setup a randomly selected maze
+    setup_maze(level_1)
+    turtle.textinput("title", "prompt")
+ 
+    # TODO turn off keypress and read commands from input
+    turtle.listen()
+    turtle.onkey(player.go_left,"Left")
+    turtle.onkey(player.go_right,"Right")
+    turtle.onkey(player.go_up,"Up")
+    turtle.onkey(player.go_down,"Down")
 
-turtle.listen()
-turtle.onkey(player.go_left,"Left")
-turtle.onkey(player.go_right,"Right")
-turtle.onkey(player.go_up,"Up")
-turtle.onkey(player.go_down,"Down")
+    Gold_left = 3
+    wn.tracer(0)
 
-Gold_left = 3
-wn.tracer(0)
-
-while True:
+    while True:
         for treasure in treasures:
-                if player.is_collision(treasure):
-                        player.gold += treasure.gold
-                        Gold_left = Gold_left-1
-                        print(Gold_left)
-                        if player.gold == 100:
-                            Starttime()
-                        else:
-                            turtle.clear()
-                            turtle.goto(-50,300)
-                            turtle.write("Player Gold:{}".format(player.gold),align="right",font=(0.0000001))
-                            turtle.goto(2000,2000)
-                            treasure.destroy()
-                            # treasures.remove(Treasure)
-                            wn.update()
+            if player.is_collision(treasure):
+                player.gold += treasure.gold
+                Gold_left = Gold_left-1
+                print(Gold_left)
+                if player.gold == 100:
+                    Starttime()
+                else:
+                    turtle.clear()
+                    turtle.goto(-50,300)
+                    turtle.write("Player Gold:{}".format(player.gold),align="right",font=(0.0000001))
+                    turtle.goto(2000,2000)
+                    treasure.destroy()
+                    # treasures.remove(Treasure)
+                    wn.update()
 
-                wn.update()
+            wn.update()

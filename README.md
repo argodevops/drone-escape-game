@@ -1,11 +1,10 @@
 # Zombie-head-maze-game-Python-turtle
-<font color="orange">A maze game using only python turtle. Pygame for music!!!<br>
-</font>
 
-Prerequisites 
+A simple maze game which takes a set of turtle commands to navigate a zombie out of the maze beating the time limit.
 
-* turtle
-* pygame
+## Prerequisites 
+
+`pip3 install -r requirements.txt`
 
 ## TODO - an ideas list of things to add to the game
 
