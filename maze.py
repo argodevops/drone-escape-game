@@ -6,13 +6,15 @@ from pygame.locals import *
 import json
 import random
 
+STEP_COUNT = 24
+
 pygame.mixer.init()
 pygame.mixer.music.load("./Music/SoundTest.wav")
 pygame.mixer.music.play(-1)
 
 wn = turtle.Screen()
 wn.bgcolor("black")
-wn.title("Zombie head adventure")
+wn.title("Drone commander")
 wn.setup(1700, 700)
 wn.tracer(0)
 wn.bgpic("./image/giphy.gif")
@@ -50,29 +52,29 @@ class Player(turtle.Turtle):
         self.speed(0)
         self.gold = 0
 
-    def go_up(self):
+    def go_up(self, count=1):
         move_to_x = player.xcor()
-        move_to_y = player.ycor() + 24
+        move_to_y = player.ycor() + (count * STEP_COUNT)
 
         if (move_to_x, move_to_y) not in walls:
             self.goto(move_to_x, move_to_y)
 
-    def go_down(self):
+    def go_down(self, count=1):
         move_to_x = player.xcor()
-        move_to_y = player.ycor() - 24
+        move_to_y = player.ycor() - (count * STEP_COUNT)
 
         if (move_to_x, move_to_y) not in walls:
             self.goto(move_to_x, move_to_y)
 
-    def go_left(self):
-        move_to_x = player.xcor() - 24
+    def go_left(self, count=1):
+        move_to_x = player.xcor() - (count * STEP_COUNT)
         move_to_y = player.ycor()
 
         if (move_to_x, move_to_y) not in walls:
             self.goto(move_to_x, move_to_y)
 
-    def go_right(self):
-        move_to_x = player.xcor() + 24
+    def go_right(self, count=1):
+        move_to_x = player.xcor() + (count * STEP_COUNT)
         move_to_y = player.ycor()
 
         if (move_to_x, move_to_y) not in walls:
@@ -178,6 +180,7 @@ def setup_maze(level):
     for y in range(len(level)):
         for x in range(len(level[y])):
             character = level[y][x]
+            print(f"Parsing position {x}, {y}: {character}")
             maze_x = -288 + (x * 24)
             maze_y = 288 - (y * 24)
 
@@ -189,6 +192,9 @@ def setup_maze(level):
                 player.goto(maze_x, maze_y)
             elif character == "T":
                 treasures.append(Treasure(maze_x, maze_y))
+            elif character == "G":
+                # TODO: Make this trigger the win
+                print(f"Goal defined at {x}, {y}")
 
 # TODO This needs a refactor!! Is it needed...
 def Starttime():
@@ -242,10 +248,14 @@ if __name__ == "__main__":
 
     # TODO setup a randomly selected maze
     maps = load_maps()
-    setup_maze(random.choice(maps))
+    map_index = random.randrange(len(maps))
+    print(f"Setting up map using map: {map_index}")
+    setup_maze(maps[map_index])
+    print("Map has been setup")
 #     turtle.textinput("title", "prompt")
     text = 'this text is editable'
     pygame.init()
+    print("Game has been initialised")
     sysfont = pygame.font.get_default_font()
     font = pygame.font.SysFont(None, 48)
 
