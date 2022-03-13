@@ -35,8 +35,8 @@ class Drone(turtle.Turtle):
     def __init__(self):
         turtle.Turtle.__init__(self)
         v = self.getscreen()
-        v.register_shape("./image/zombie.gif")
-        self.shape("./image/zombie.gif")
+        v.register_shape("./image/drone.gif")
+        self.shape("./image/drone.gif")
         self.color("blue")
         self.penup()
         self.speed(0)
@@ -104,20 +104,40 @@ class Treasure(turtle.Turtle):
         self.hideturtle()
 
 # TODO - add input textbox area
-class TextBox:
-    def __init__(self, x=250, y=250, w=300, h=50, pen: turtle.Turtle = None):
+# class TextBox:
+#     def __init__(self, x=250, y=250, w=300, h=50, pen: turtle.Turtle = None):
+#         self.x = x
+#         self.y = y
+#         self.w = w
+#         self.h = h
+#         if pen is not None:
+#             self.pen = pen
+#         else:
+#             self.pen = turtle.Turtle
+#             self.pen.hideturtle()
+#             self.pen.penup()
+#             self.pen.color("white")
+
+class Button:
+    def __init__(self, message: str, x=-500, y=100, w=150, h=50):
+        self.message = message
         self.x = x
         self.y = y
         self.w = w
         self.h = h
-        if pen is not None:
-            self.pen = pen
-        else:
-            self.pen = turtle.Turtle
-            self.pen.hideturtle()
-            self.pen.penup()
-            self.pen.color("white")
-                
+    
+    def render(self, pen: turtle.Turtle):
+        pen.penup()
+        pen.color("black", "green")
+        pen.begin_fill()
+        pen.goto(self.x, self.y)
+        pen.goto(self.x + self.w, self.y)
+        pen.goto(self.x + self.w, self.y + self.h)
+        pen.goto(self.x, self.y + self.h)
+        pen.goto(self.x, self.y)
+        pen.end_fill()
+        pen.goto(self.x + 15, self.y + 15)
+        pen.write(self.message, font = ('Arial', 15, 'normal'));      
         
 # TODO add in moving enemy
 # class Enemy(turtle.Turtle):
@@ -187,6 +207,9 @@ def setup_maze(level):
                 print(f"Goal defined at {x}, {y}")
     wn.update()
 
+def button_click():
+    pass
+
 # TODO This needs a refactor!! Is it needed...
 def Starttime():
         treasure.destroy()
@@ -243,11 +266,13 @@ if __name__ == "__main__":
     # Play annoying music
     pygame.mixer.init()
     pygame.mixer.music.load("./Music/SoundTest.wav")
-    pygame.mixer.music.play(-1)
+    # pygame.mixer.music.play(-1)
 
-    # Initialise drone player
+    # Initialise stuff
     pen = Pen()
     player = Drone()
+    start_button = Button("Start Game", -500, 100, 150, 50).render(pen)
+    reset_button = Button("Reset Game", -500, -100, 150, 50).render(pen)
     walls = []
     treasures = []
 
@@ -255,9 +280,9 @@ if __name__ == "__main__":
     maps = load_maps()
     map_index = random.randrange(len(maps))
     print(f"Setting up map using map: {map_index}")
-
     setup_maze(maps[map_index])
     print("Map has been setup")
+
 #     turtle.textinput("title", "prompt")
     text = 'this text is editable'
     pygame.init()
@@ -293,8 +318,8 @@ if __name__ == "__main__":
                     treasure.destroy()
                     # treasures.remove(Treasure)
                     wn.update()
-        try:
-            wn.update()
-        except Exception:
-            print("Exit game")
-            sys.exit(0)
+            try:
+                wn.update()
+            except Exception:
+                print("Exit game")
+                sys.exit(0)
