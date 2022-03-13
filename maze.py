@@ -5,19 +5,9 @@ import pygame
 from pygame.locals import *
 import json
 import random
+import sys
 
 STEP_COUNT = 24
-
-pygame.mixer.init()
-pygame.mixer.music.load("./Music/SoundTest.wav")
-pygame.mixer.music.play(-1)
-
-wn = turtle.Screen()
-wn.bgcolor("black")
-wn.title("Drone commander")
-wn.setup(1700, 700)
-wn.tracer(0)
-wn.bgpic("./image/giphy.gif")
 
 class Pen(turtle.Turtle):
     """
@@ -35,9 +25,9 @@ class Pen(turtle.Turtle):
         self.penup()
         self.speed(3)
 
-class Player(turtle.Turtle):
+class Drone(turtle.Turtle):
     """
-    Moves the player object
+    Moves the drone object
 
     Args:
         turtle (_type_): turtle object
@@ -195,6 +185,7 @@ def setup_maze(level):
             elif character == "G":
                 # TODO: Make this trigger the win
                 print(f"Goal defined at {x}, {y}")
+    wn.update()
 
 # TODO This needs a refactor!! Is it needed...
 def Starttime():
@@ -240,16 +231,31 @@ def Starttime():
 
 
 if __name__ == "__main__":
+    
+    # Set up window
+    wn = turtle.Screen()
+    wn.bgcolor("black")
+    wn.title("Drone commander")
+    wn.setup(1700, 700)
+    wn.tracer(0)
+    wn.bgpic("./image/giphy.gif")
 
+    # Play annoying music
+    pygame.mixer.init()
+    pygame.mixer.music.load("./Music/SoundTest.wav")
+    pygame.mixer.music.play(-1)
+
+    # Initialise drone player
     pen = Pen()
-    player = Player()
+    player = Drone()
     walls = []
     treasures = []
 
-    # TODO setup a randomly selected maze
+    # Set up maze    
     maps = load_maps()
     map_index = random.randrange(len(maps))
     print(f"Setting up map using map: {map_index}")
+
     setup_maze(maps[map_index])
     print("Map has been setup")
 #     turtle.textinput("title", "prompt")
@@ -269,7 +275,7 @@ if __name__ == "__main__":
     turtle.onkey(player.go_down,"Down")
 
     Gold_left = 3
-    wn.tracer(0)
+    # wn.tracer(0)
 
     while True:
         for treasure in treasures:
@@ -287,5 +293,8 @@ if __name__ == "__main__":
                     treasure.destroy()
                     # treasures.remove(Treasure)
                     wn.update()
-
+        try:
             wn.update()
+        except Exception:
+            print("Exit game")
+            sys.exit(0)
