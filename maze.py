@@ -1,6 +1,7 @@
 import turtle
 import math
-from time import *
+import time
+from numpy import array
 import pygame
 from pygame.locals import *
 import json
@@ -137,7 +138,8 @@ class Button:
         pen.goto(self.x, self.y)
         pen.end_fill()
         pen.goto(self.x + 15, self.y + 15)
-        pen.write(self.message, font = ('Arial', 15, 'normal'));      
+        pen.write(self.message, font=("Courier", 18))
+
         
 # TODO add in moving enemy
 # class Enemy(turtle.Turtle):
@@ -186,7 +188,7 @@ def load_maps():
     with open('./assets/mazes.json') as w:
         return json.load(w)
 
-def setup_maze(level):
+def setup_maze(level: array):
     for y in range(len(level)):
         for x in range(len(level[y])):
             character = level[y][x]
@@ -206,9 +208,26 @@ def setup_maze(level):
                 # TODO: Make this trigger the win
                 print(f"Goal defined at {x}, {y}")
     wn.update()
+    
+    canvas = turtle.getcanvas()
+    canvas.bind('<Motion>', on_click)    
 
-def button_click():
-    pass
+
+def on_click(event):
+    x, y = event.x, event.y
+    print('x={}, y={}'.format(x, y))
+    # TODO capture start/reset button clicks 
+    # if (x >= 600 and x <= 800) and (  y >= 280 and y <= 300):
+    #     turtle.onscreenclick(lambda x, y: turtle.bgcolor('red'))
+    
+
+def countdown_timer():
+    turtle.speed(0)
+    turtle.penup()
+    turtle.clear()
+    turtle.goto(-500, 150)
+    turtle.write((str(int(time.time() - start))) + " seconds", font=("Courier", 18))
+
 
 # TODO This needs a refactor!! Is it needed...
 def Starttime():
@@ -221,16 +240,16 @@ def Starttime():
 
         start_timer = time()
 
-        struct = localtime(start_timer)
+        struct = time.localtime(start_timer)
 
 
-        turtle.onscreenclick(None)
+        # turtle.onscreenclick(None)
         turtle.speed(0)
         turtle.penup()
-        turtle.goto(10,300)
+        turtle.goto(10, 300)
         turtle.color("red")
         turtle.write(" It's a fake gold!!! In to laggy mode!!!",align="left", font=(10))
-        turtle.goto(-50,300)
+        turtle.goto(-50, 300)
         turtle.write("\nRespawn in 5 seconds",align="right",font=(0.0000001))
         turtle.goto(2000,2000)
 
@@ -244,7 +263,7 @@ def Starttime():
                 x.write(i+1,font=(0.0000001))
                 x.penup()
                 x.goto(2000,2000)
-                sleep(1)
+                time.sleep(1)
                 wn.update()
                 x.clear()
         end_timer = time()
@@ -268,11 +287,12 @@ if __name__ == "__main__":
     pygame.mixer.music.load("./Music/SoundTest.wav")
     # pygame.mixer.music.play(-1)
 
-    # Initialise stuff
+    # Initialise buttons, timer, etc
     pen = Pen()
-    player = Drone()
+    start = time.time()
     start_button = Button("Start Game", -500, 100, 150, 50).render(pen)
-    reset_button = Button("Reset Game", -500, -100, 150, 50).render(pen)
+    reset_button = Button("Reset Game", -500, 20, 150, 50).render(pen)
+    
     walls = []
     treasures = []
 
@@ -280,17 +300,18 @@ if __name__ == "__main__":
     maps = load_maps()
     map_index = random.randrange(len(maps))
     print(f"Setting up map using map: {map_index}")
+    player = Drone()
     setup_maze(maps[map_index])
     print("Map has been setup")
 
-#     turtle.textinput("title", "prompt")
-    text = 'this text is editable'
-    pygame.init()
-    print("Game has been initialised")
-    sysfont = pygame.font.get_default_font()
-    font = pygame.font.SysFont(None, 48)
+    # turtle.textinput("title", "prompt")
+    # text = 'this text is editable'
+    # pygame.init()
+    # print("Game has been initialised")
+    # sysfont = pygame.font.get_default_font()
+    # font = pygame.font.SysFont(None, 48)
 
-    img = font.render(text, True, (0, 255, 255))
+    # img = font.render(text, True, (0, 255, 255))
  
     # TODO turn off keypress and read commands from input
     turtle.listen()
@@ -318,8 +339,9 @@ if __name__ == "__main__":
                     treasure.destroy()
                     # treasures.remove(Treasure)
                     wn.update()
-            try:
-                wn.update()
-            except Exception:
-                print("Exit game")
-                sys.exit(0)
+        try:
+            countdown_timer()
+            wn.update()
+        except Exception:
+            print("Exit game")
+            sys.exit(0)
