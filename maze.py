@@ -1,3 +1,4 @@
+""" Drone Maze Game """
 import turtle
 import math
 from numpy import array
@@ -18,8 +19,8 @@ class Pen(turtle.Turtle):
     """
     def  __init__(self):
         turtle.Turtle.__init__(self)
-        v = self.getscreen()
-        v.register_shape("./image/block.gif")
+        screen = self.getscreen()
+        screen.register_shape("./image/block.gif")
         self.shape("./image/block.gif")
         self.color("white")
         self.penup()
@@ -42,6 +43,12 @@ class Drone(turtle.Turtle):
         self.speed(0)
         self.gold = 0
 
+    """
+    Moves up
+
+    Args:
+        turtle (_type_): turtle object
+    """
     def go_up(self, count=1):
         move_to_x = player.xcor()
         move_to_y = player.ycor() + (count * STEP_COUNT)
@@ -49,6 +56,12 @@ class Drone(turtle.Turtle):
         if (move_to_x, move_to_y) not in walls:
             self.goto(move_to_x, move_to_y)
 
+    """
+    Moves down
+
+    Args:
+        turtle (_type_): turtle object
+    """
     def go_down(self, count=1):
         move_to_x = player.xcor()
         move_to_y = player.ycor() - (count * STEP_COUNT)
@@ -56,6 +69,12 @@ class Drone(turtle.Turtle):
         if (move_to_x, move_to_y) not in walls:
             self.goto(move_to_x, move_to_y)
 
+    """
+    Moves left
+
+    Args:
+        turtle (_type_): turtle object
+    """
     def go_left(self, count=1):
         move_to_x = player.xcor() - (count * STEP_COUNT)
         move_to_y = player.ycor()
@@ -63,6 +82,12 @@ class Drone(turtle.Turtle):
         if (move_to_x, move_to_y) not in walls:
             self.goto(move_to_x, move_to_y)
 
+    """
+    Moves right
+
+    Args:
+        turtle (_type_): turtle object
+    """
     def go_right(self, count=1):
         move_to_x = player.xcor() + (count * STEP_COUNT)
         move_to_y = player.ycor()
@@ -90,8 +115,8 @@ class Treasure(turtle.Turtle):
     """
     def __init__(self, x, y):
         turtle.Turtle.__init__(self)
-        v = self.getscreen()
-        v.register_shape("./image/treasure.gif")
+        screen = self.getscreen()
+        screen.register_shape("./image/treasure.gif")
         self.shape("./image/treasure.gif")
         self.color("gold")
         self.penup()
@@ -104,37 +129,37 @@ class Treasure(turtle.Turtle):
         self.hideturtle()
 
 class Button:
-    def __init__(self, message: str, x=-500, y=100, w=150, h=50):
+    def __init__(self, message: str, pos_x=-500, pos_y=100, pos_w=150, pos_h=50):
         self.message = message
-        self.x = x
-        self.y = y
-        self.w = w
-        self.h = h
-    
+        self.pos_x = pos_x
+        self.pos_y = pos_y
+        self.pos_w = pos_w
+        self.pos_h = pos_h
+
     def render(self, pen: turtle.Turtle):
         pen.penup()
         pen.color("black", "green")
         pen.begin_fill()
-        pen.goto(self.x, self.y)
-        pen.goto(self.x + self.w, self.y)
-        pen.goto(self.x + self.w, self.y + self.h)
-        pen.goto(self.x, self.y + self.h)
-        pen.goto(self.x, self.y)
+        pen.goto(self.pos_x, self.pos_y)
+        pen.goto(self.pos_x + self.pos_w, self.pos_y)
+        pen.goto(self.pos_x + self.pos_w, self.pos_y + self.pos_h)
+        pen.goto(self.pos_x, self.pos_y + self.pos_h)
+        pen.goto(self.pos_x, self.pos_y)
         pen.end_fill()
-        pen.goto(self.x + 15, self.y + 15)
+        pen.goto(self.pos_x + 15, self.pos_y + 15)
         pen.write(self.message, font=("Courier", 18))
 
 def load_maps():
-    with open('./assets/mazes.json') as w:
-        return json.load(w)
+    with open('./assets/mazes.json') as maze_file:
+        return json.load(maze_file)
 
 def setup_maze(level: array):
-    for y in range(len(level)):
-        for x in range(len(level[y])):
-            character = level[y][x]
-            print(f"Parsing position {x}, {y}: {character}")
-            maze_x = -288 + (x * 24)
-            maze_y = 288 - (y * 24)
+    for pos_y in range(len(level)):
+        for pos_x in range(len(level[y])):
+            character = level[pos_y][pos_x]
+            print(f"Parsing position {pos_x}, {pos_y}: {character}")
+            maze_x = -288 + (pos_x * 24)
+            maze_y = 288 - (pos_y * 24)
 
             if character == "X":
                 pen.goto(maze_x, maze_y)
@@ -146,17 +171,17 @@ def setup_maze(level: array):
                 treasures.append(Treasure(maze_x, maze_y))
             elif character == "G":
                 # TODO: Make this trigger the win
-                print(f"Goal defined at {x}, {y}")
+                print(f"Goal defined at {pos_x}, {pos_y}")
     wn.update()
-    
+
     canvas = turtle.getcanvas()
-    canvas.bind('<Motion>', on_click)    
+    canvas.bind('<Motion>', on_click)
 
 
 def on_click(event):
-    x, y = event.x, event.y
-    print('x={}, y={}'.format(x, y))
-    # TODO capture start/reset button clicks 
+    pos_x, pos_y = event.x, event.y
+    print('x={}, y={}'.format(pos_x, pos_y))
+    # TODO capture start/reset button clicks
     # if (x >= 600 and x <= 800) and (  y >= 280 and y <= 300):
     #     turtle.onscreenclick(lambda x, y: turtle.bgcolor('red'))
     
@@ -171,49 +196,46 @@ def countdown_timer():
 
 # TODO This needs a refactor!! Is it needed...
 def start_time():
-        treasure.destroy()
-        treasures.remove(treasure)
-        wn.update()
+    treasure.destroy()
+    treasures.remove(treasure)
+    wn.update()
 
-        pygame.mixer.music.load("./Music/Gameover.wav")
-        pygame.mixer.music.play(4)
+    pygame.mixer.music.load("./Music/Gameover.wav")
+    pygame.mixer.music.play(4)
 
-        start_timer = time()
+    start_timer = time()
 
-        struct = time.localtime(start_timer)
+    struct = time.localtime(start_timer)
 
+    turtle.speed(0)
+    turtle.penup()
+    turtle.goto(10, 300)
+    turtle.color("red")
+    turtle.write(" It's a fake gold!!! In to laggy mode!!!",align="left", font=(10))
+    turtle.goto(-50,300)
+    turtle.write("\nRespawn in 5 seconds",align="right", font=(0.0000001))
+    turtle.goto(2000,2000)
 
-        # turtle.onscreenclick(None)
-        turtle.speed(0)
-        turtle.penup()
-        turtle.goto(10, 300)
-        turtle.color("red")
-        turtle.write(" It's a fake gold!!! In to laggy mode!!!",align="left", font=(10))
-        turtle.goto(-50,300)
-        turtle.write("\nRespawn in 5 seconds",align="right", font=(0.0000001))
-        turtle.goto(2000,2000)
-
-
-        i = 5      
-        while i> -1:
-                i-=1
-                x = turtle.Turtle()
-                x.pencolor= ("blue")
-                x.goto(0,0)
-                x.write(i+1, font=(0.0000001))
-                x.penup()
-                x.goto(2000,2000)
-                time.sleep(1)
-                wn.update()
-                x.clear()
-        end_timer = time()
-        pygame.mixer.music.load("./Music/SoundTest.wav")
-        pygame.mixer.music.play(-1)
-        turtle.clear()
+    i = 5
+    while i> -1:
+            i-=1
+            x = turtle.Turtle()
+            x.pencolor= ("blue")
+            x.goto(0,0)
+            x.write(i+1, font=(0.0000001))
+            x.penup()
+            x.goto(2000,2000)
+            time.sleep(1)
+            wn.update()
+            x.clear()
+    end_timer = time()
+    pygame.mixer.music.load("./Music/SoundTest.wav")
+    pygame.mixer.music.play(-1)
+    turtle.clear()
 
 
 if __name__ == "__main__":
-    
+
     # Set up window
     wn = turtle.Screen()
     wn.bgcolor("black")
@@ -232,18 +254,18 @@ if __name__ == "__main__":
     start = time.time()
     start_button = Button("Start Game", -500, 100, 150, 50).render(pen)
     reset_button = Button("Reset Game", -500, 20, 150, 50).render(pen)
-    
+
     walls = []
     treasures = []
 
-    # Set up maze    
+    # Set up maze
     maps = load_maps()
     map_index = random.randrange(len(maps))
     print(f"Setting up map using map: {map_index}")
     player = Drone()
     setup_maze(maps[map_index])
     print("Map has been setup")
- 
+
     # TODO turn off keypress and read commands from input
     turtle.listen()
     turtle.onkey(player.go_left,"Left")
