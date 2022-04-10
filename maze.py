@@ -143,7 +143,7 @@ class Button:
         self.pos_w = pos_w
         self.pos_h = pos_h
 
-    def render(self, pen: turtle.Turtle):
+    def render(self, turtle: turtle.Turtle):
         """_summary_
 
         Args:
