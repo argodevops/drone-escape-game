@@ -147,25 +147,35 @@ class Button:
         """_summary_
 
         Args:
-            pen (turtle.Turtle): _description_
+            turtle (turtle.Turtle): _description_
         """
-        pen.penup()
-        pen.color("black", "green")
-        pen.begin_fill()
-        pen.goto(self.pos_x, self.pos_y)
-        pen.goto(self.pos_x + self.pos_w, self.pos_y)
-        pen.goto(self.pos_x + self.pos_w, self.pos_y + self.pos_h)
-        pen.goto(self.pos_x, self.pos_y + self.pos_h)
-        pen.goto(self.pos_x, self.pos_y)
-        pen.end_fill()
-        pen.goto(self.pos_x + 15, self.pos_y + 15)
-        pen.write(self.message, font=("Courier", 18))
+        turtle.penup()
+        turtle.color("black", "green")
+        turtle.begin_fill()
+        turtle.goto(self.pos_x, self.pos_y)
+        turtle.goto(self.pos_x + self.pos_w, self.pos_y)
+        turtle.goto(self.pos_x + self.pos_w, self.pos_y + self.pos_h)
+        turtle.goto(self.pos_x, self.pos_y + self.pos_h)
+        turtle.goto(self.pos_x, self.pos_y)
+        turtle.end_fill()
+        turtle.goto(self.pos_x + 15, self.pos_y + 15)
+        turtle.write(self.message, font=("Courier", 18))
 
 def load_maps():
+    """_summary_
+
+    Returns:
+        _type_: _description_
+    """
     with open('./assets/mazes.json') as maze_file:
         return json.load(maze_file)
 
 def setup_maze(level: array):
+    """_summary_
+
+    Args:
+        level (array): _description_
+    """
     for pos_y in range(len(level)):
         for pos_x in range(len(level[pos_y])):
             character = level[pos_y][pos_x]
@@ -191,6 +201,11 @@ def setup_maze(level: array):
 
 
 def on_click(event):
+    """_summary_
+
+    Args:
+        event (_type_): _description_
+    """
     pos_x, pos_y = event.x, event.y
     print('x={}, y={}'.format(pos_x, pos_y))
     # TODO capture start/reset button clicks
@@ -199,6 +214,8 @@ def on_click(event):
 
 
 def countdown_timer():
+    """_summary_
+    """
     turtle.speed(0)
     turtle.penup()
     turtle.clear()
@@ -207,6 +224,8 @@ def countdown_timer():
 
 # TODO This needs a refactor!! Is it needed...
 def start_time():
+    """_summary_
+    """
     treasure.destroy()
     treasures.remove(treasure)
     wn.update()
