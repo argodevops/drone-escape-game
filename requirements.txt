@@ -1,2 +1,3 @@
-turtle
+PythonTurtle
 pygame
+numpy

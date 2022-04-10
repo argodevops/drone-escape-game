@@ -1,10 +1,8 @@
 import turtle
 import math
-import time
 from numpy import array
-from time import time, localtime, sleep
+import time
 import pygame
-from pygame.locals import *
 import json
 import random
 import sys

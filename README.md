@@ -3,7 +3,7 @@
 A simple maze game which takes a set of turtle commands to navigate a zombie out of the maze beating the time limit.
 
 ## Developer guide
-1. Create your virtual environment: ```python3 -m --system-site-packages .venv```
+1. Create your virtual environment: ```python3 -m venv .venv```
 2. Activate the virtual environment: ```source ./.venv/bin/activate```
 3. Install the dependencies: ```pip install -r requirements.txt```
 
