@@ -1,12 +1,12 @@
 """ Drone Maze Game """
 import turtle
 import math
-from numpy import array
 import time
 import pygame
 import json
 import random
 import sys
+from numpy import array
 
 STEP_COUNT = 24
 
@@ -75,14 +75,10 @@ class Drone(turtle.Turtle):
 
     # CPF - use collision
     def is_collision(self, other):
-        a = self.xcor()-other.xcor()
-        b = self.ycor()-other.ycor()
-        distance = math.sqrt((a**2)+(b**2))
-
-        if distance < 5:
-            return True
-        else:
-            return False
+        pos_x = self.xcor()-other.xcor()
+        pos_y = self.ycor()-other.ycor()
+        distance = math.sqrt((pos_x**2)+(pos_y**2))
+        return distance < 5
 
 class Treasure(turtle.Turtle):
     """
@@ -204,7 +200,7 @@ def start_time():
         screen.goto(0,0)
         screen.write(i+1, font=(0.0000001))
         screen.penup()
-        screen.goto(2000,2000)
+        screen.goto(2000, 2000)
         time.sleep(1)
         wn.update()
         screen.clear()
@@ -251,27 +247,26 @@ if __name__ == "__main__":
     turtle.onkey(player.go_up,"Up")
     turtle.onkey(player.go_down,"Down")
 
-    Gold_left = 3
+    gold_left = 3
 
     while True:
         for treasure in treasures:
             if player.is_collision(treasure):
                 player.gold += treasure.gold
-                Gold_left = Gold_left-1
-                print(Gold_left)
+                gold_left = gold_left-1
+                print(gold_left)
                 if player.gold == 100:
                     start_time()
                 else:
                     turtle.clear()
                     turtle.goto(-50,300)
-                    turtle.write("Player Gold:{}".format(player.gold),align="right",
-                                 font=(0.0000001))
-                    turtle.goto(2000,2000)
+                    turtle.write(f"Player Gold:{player.gold}", font=(0.0000001))
+                    turtle.goto(2000, 2000)
                     treasure.destroy()
                     wn.update()
         try:
             countdown_timer()
             wn.update()
-        except Exception:
+        except:
             print("Exit game")
             sys.exit(0)
