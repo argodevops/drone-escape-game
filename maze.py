@@ -46,6 +46,11 @@ class Drone(turtle.Turtle):
         self.gold = 0
 
     def go_up(self, count=1):
+        """_summary_
+
+        Args:
+            count (int, optional): _description_. Defaults to 1.
+        """
         move_to_x = player.xcor()
         move_to_y = player.ycor() + (count * STEP_COUNT)
 
@@ -73,7 +78,7 @@ class Drone(turtle.Turtle):
         if (move_to_x, move_to_y) not in walls:
             self.goto(move_to_x, move_to_y)
 
-    # CPF - use collision
+    # TODO - use collision
     def is_collision(self, other):
         pos_x = self.xcor()-other.xcor()
         pos_y = self.ycor()-other.ycor()
@@ -158,7 +163,7 @@ def setup_maze(level: array):
 def on_click(event):
     pos_x, pos_y = event.x, event.y
     print('x={}, y={}'.format(pos_x, pos_y))
-    # CPF capture start/reset button clicks
+    # TODO capture start/reset button clicks
     # if (x >= 600 and x <= 800) and (  y >= 280 and y <= 300):
     #     turtle.onscreenclick(lambda x, y: turtle.bgcolor('red'))
 
@@ -170,7 +175,7 @@ def countdown_timer():
     turtle.goto(-500, 150)
     turtle.write((str(int(time.time() - start))) + " seconds", font=("Courier", 18))
 
-# CPF This needs a refactor!! Is it needed...
+# TODO This needs a refactor!! Is it needed...
 def start_time():
     treasure.destroy()
     treasures.remove(treasure)
@@ -240,7 +245,7 @@ if __name__ == "__main__":
     setup_maze(maps[map_index])
     print("Map has been setup")
 
-    # CPF turn off keypress and read commands from input
+    # TODO turn off keypress and read commands from input
     turtle.listen()
     turtle.onkey(player.go_left,"Left")
     turtle.onkey(player.go_right,"Right")
