@@ -58,6 +58,11 @@ class Drone(turtle.Turtle):
             self.goto(move_to_x, move_to_y)
 
     def go_down(self, count=1):
+        """_summary_
+
+        Args:
+            count (int, optional): _description_. Defaults to 1.
+        """
         move_to_x = player.xcor()
         move_to_y = player.ycor() - (count * STEP_COUNT)
 
@@ -65,6 +70,11 @@ class Drone(turtle.Turtle):
             self.goto(move_to_x, move_to_y)
 
     def go_left(self, count=1):
+        """_summary_
+
+        Args:
+            count (int, optional): _description_. Defaults to 1.
+        """
         move_to_x = player.xcor() - (count * STEP_COUNT)
         move_to_y = player.ycor()
 
@@ -72,6 +82,11 @@ class Drone(turtle.Turtle):
             self.goto(move_to_x, move_to_y)
 
     def go_right(self, count=1):
+        """_summary_
+
+        Args:
+            count (int, optional): _description_. Defaults to 1.
+        """
         move_to_x = player.xcor() + (count * STEP_COUNT)
         move_to_y = player.ycor()
 
@@ -80,6 +95,14 @@ class Drone(turtle.Turtle):
 
     # TODO - use collision
     def is_collision(self, other):
+        """_summary_
+
+        Args:
+            other (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         pos_x = self.xcor()-other.xcor()
         pos_y = self.ycor()-other.ycor()
         distance = math.sqrt((pos_x**2)+(pos_y**2))
@@ -104,6 +127,8 @@ class Treasure(turtle.Turtle):
         self.goto(x,y)
 
     def destroy(self):
+        """_summary_
+        """
         self.goto(2000, 2000)
         self.hideturtle()
 
@@ -119,6 +144,11 @@ class Button:
         self.pos_h = pos_h
 
     def render(self, pen: turtle.Turtle):
+        """_summary_
+
+        Args:
+            pen (turtle.Turtle): _description_
+        """
         pen.penup()
         pen.color("black", "green")
         pen.begin_fill()
@@ -272,6 +302,6 @@ if __name__ == "__main__":
         try:
             countdown_timer()
             wn.update()
-        except:
+        except Exception:
             print("Exit game")
             sys.exit(0)
