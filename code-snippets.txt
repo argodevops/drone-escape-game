@@ -1,0 +1,61 @@
+# Some code snippets - can be removed once code is working
+
+# TODO add in moving enemy
+# class Enemy(turtle.Turtle):
+#         def __init__(self,x,y):
+#                 turtle.Turtle.__init__(self)
+#                 self.shape("square")
+#                 self.color("purple")
+#                 self.penup()
+#                 self.speed(0)
+#                 self.gold = 25
+#                 self.goto(x, y)
+#                 self.direction= random.choice(["up","down","left","right"])
+
+#         def move(self):
+#                 if self.direction =="up":
+#                         dx = 0
+#                         dy= 24
+#                 elif self.direction =="down":
+#                         dx = 0
+#                         dy = -24
+#                 elif self.direction =="right":
+#                         dx = -24
+#                         dy = 0
+#                 elif self.direction == "left":
+#                         dx= 24
+#                         dy= 0
+#                 else:
+#                         dx = 0
+#                         dy = 0
+
+#                 move_to_x = self.xcor() + dx
+#                 move_to_y = self.ycor() +dy
+
+#                 if(move_to_x, move_to_y) not in walls:
+#                         self.goto(move_to_x,move_to_y)
+#                 else:
+#                         self.direction = random.choice()["up","down","left","right"]
+
+#                 turtle.ontimer(self.move, t=random.randint (100,300))
+
+#         def destroy(self):
+#                 self.goto(2000,2000)
+#                 self.hideturtle()
+
+
+
+# TODO - add input textbox area
+# class TextBox:
+#     def __init__(self, x=250, y=250, w=300, h=50, pen: turtle.Turtle = None):
+#         self.x = x
+#         self.y = y
+#         self.w = w
+#         self.h = h
+#         if pen is not None:
+#             self.pen = pen
+#         else:
+#             self.pen = turtle.Turtle
+#             self.pen.hideturtle()
+#             self.pen.penup()
+#             self.pen.color("white")

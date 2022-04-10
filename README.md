@@ -1,4 +1,4 @@
-# Zombie-head-maze-game-Python-turtle
+# Drone Maze Game
 
 A simple maze game which takes a set of turtle commands to navigate a zombie out of the maze beating the time limit.
 

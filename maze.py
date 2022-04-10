@@ -1,8 +1,8 @@
 import turtle
 import math
-from time import *
+from time import time, localtime, sleep
 import pygame
-from pygame.locals import *
+#from pygame.locals import *
 import json
 import random
 import sys
@@ -103,21 +103,6 @@ class Treasure(turtle.Turtle):
         self.goto(2000, 2000)
         self.hideturtle()
 
-# TODO - add input textbox area
-# class TextBox:
-#     def __init__(self, x=250, y=250, w=300, h=50, pen: turtle.Turtle = None):
-#         self.x = x
-#         self.y = y
-#         self.w = w
-#         self.h = h
-#         if pen is not None:
-#             self.pen = pen
-#         else:
-#             self.pen = turtle.Turtle
-#             self.pen.hideturtle()
-#             self.pen.penup()
-#             self.pen.color("white")
-
 class Button:
     def __init__(self, message: str, x=-500, y=100, w=150, h=50):
         self.message = message
@@ -138,49 +123,6 @@ class Button:
         pen.end_fill()
         pen.goto(self.x + 15, self.y + 15)
         pen.write(self.message, font = ('Arial', 15, 'normal'));      
-        
-# TODO add in moving enemy
-# class Enemy(turtle.Turtle):
-#         def __init__(self,x,y):
-#                 turtle.Turtle.__init__(self)
-#                 self.shape("square")
-#                 self.color("purple")
-#                 self.penup()
-#                 self.speed(0)
-#                 self.gold = 25
-#                 self.goto(x, y)
-#                 self.direction= random.choice(["up","down","left","right"])
-
-#         def move(self):
-#                 if self.direction =="up":
-#                         dx = 0
-#                         dy= 24
-#                 elif self.direction =="down":
-#                         dx = 0
-#                         dy = -24
-#                 elif self.direction =="right":
-#                         dx = -24
-#                         dy = 0
-#                 elif self.direction == "left":
-#                         dx= 24
-#                         dy= 0
-#                 else:
-#                         dx = 0
-#                         dy = 0
-
-#                 move_to_x = self.xcor() + dx
-#                 move_to_y = self.ycor() +dy
-
-#                 if(move_to_x, move_to_y) not in walls:
-#                         self.goto(move_to_x,move_to_y)
-#                 else:
-#                         self.direction = random.choice()["up","down","left","right"]
-
-#                 turtle.ontimer(self.move, t=random.randint (100,300))
-
-#         def destroy(self):
-#                 self.goto(2000,2000)
-#                 self.hideturtle()
 
 def load_maps():
     with open('./assets/mazes.json') as w:
@@ -211,7 +153,7 @@ def button_click():
     pass
 
 # TODO This needs a refactor!! Is it needed...
-def Starttime():
+def start_time():
         treasure.destroy()
         treasures.remove(treasure)
         wn.update()
@@ -231,7 +173,7 @@ def Starttime():
         turtle.color("red")
         turtle.write(" It's a fake gold!!! In to laggy mode!!!",align="left", font=(10))
         turtle.goto(-50,300)
-        turtle.write("\nRespawn in 5 seconds",align="right",font=(0.0000001))
+        turtle.write("\nRespawn in 5 seconds",align="right", font=(0.0000001))
         turtle.goto(2000,2000)
 
 
@@ -241,7 +183,7 @@ def Starttime():
                 x = turtle.Turtle()
                 x.pencolor= ("blue")
                 x.goto(0,0)
-                x.write(i+1,font=(0.0000001))
+                x.write(i+1, font=(0.0000001))
                 x.penup()
                 x.goto(2000,2000)
                 sleep(1)
@@ -266,7 +208,7 @@ if __name__ == "__main__":
     # Play annoying music
     pygame.mixer.init()
     pygame.mixer.music.load("./Music/SoundTest.wav")
-    # pygame.mixer.music.play(-1)
+    pygame.mixer.music.play(-1)
 
     # Initialise stuff
     pen = Pen()
@@ -283,7 +225,6 @@ if __name__ == "__main__":
     setup_maze(maps[map_index])
     print("Map has been setup")
 
-#     turtle.textinput("title", "prompt")
     text = 'this text is editable'
     pygame.init()
     print("Game has been initialised")
@@ -300,7 +241,6 @@ if __name__ == "__main__":
     turtle.onkey(player.go_down,"Down")
 
     Gold_left = 3
-    # wn.tracer(0)
 
     while True:
         for treasure in treasures:
@@ -309,14 +249,13 @@ if __name__ == "__main__":
                 Gold_left = Gold_left-1
                 print(Gold_left)
                 if player.gold == 100:
-                    Starttime()
+                    start_time()
                 else:
                     turtle.clear()
                     turtle.goto(-50,300)
                     turtle.write("Player Gold:{}".format(player.gold),align="right",font=(0.0000001))
                     turtle.goto(2000,2000)
                     treasure.destroy()
-                    # treasures.remove(Treasure)
                     wn.update()
             try:
                 wn.update()
