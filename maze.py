@@ -156,7 +156,7 @@ def load_maps():
 
 def setup_maze(level: array):
     for pos_y in range(len(level)):
-        for pos_x in range(len(level[y])):
+        for pos_x in range(len(level[pos_y])):
             character = level[pos_y][pos_x]
             print(f"Parsing position {pos_x}, {pos_y}: {character}")
             maze_x = -288 + (pos_x * 24)
@@ -220,16 +220,15 @@ def start_time():
     i = 5
     while i> -1:
         i-=1
-        x = turtle.Turtle()
-        x.pencolor= ("blue")
-        x.goto(0,0)
-        x.write(i+1, font=(0.0000001))
-        x.penup()
-        x.goto(2000,2000)
+        screen = turtle.Turtle()
+        screen.pencolor = ("blue")
+        screen.goto(0,0)
+        screen.write(i+1, font=(0.0000001))
+        screen.penup()
+        screen.goto(2000,2000)
         time.sleep(1)
         wn.update()
-        x.clear()
-    end_timer = time()
+        screen.clear()
     pygame.mixer.music.load("./Music/SoundTest.wav")
     pygame.mixer.music.play(-1)
     turtle.clear()
