@@ -35,8 +35,8 @@ class Drone(turtle.Turtle):
     """
     def __init__(self):
         turtle.Turtle.__init__(self)
-        v = self.getscreen()
-        v.register_shape("./image/drone.gif")
+        screen = self.getscreen()
+        screen.register_shape("./image/drone.gif")
         self.shape("./image/drone.gif")
         self.color("blue")
         self.penup()
@@ -48,6 +48,7 @@ class Drone(turtle.Turtle):
 
     Args:
         turtle (_type_): turtle object
+        count: increment
     """
     def go_up(self, count=1):
         move_to_x = player.xcor()
@@ -184,7 +185,7 @@ def on_click(event):
     # TODO capture start/reset button clicks
     # if (x >= 600 and x <= 800) and (  y >= 280 and y <= 300):
     #     turtle.onscreenclick(lambda x, y: turtle.bgcolor('red'))
-    
+
 
 def countdown_timer():
     turtle.speed(0)
@@ -218,16 +219,16 @@ def start_time():
 
     i = 5
     while i> -1:
-            i-=1
-            x = turtle.Turtle()
-            x.pencolor= ("blue")
-            x.goto(0,0)
-            x.write(i+1, font=(0.0000001))
-            x.penup()
-            x.goto(2000,2000)
-            time.sleep(1)
-            wn.update()
-            x.clear()
+        i-=1
+        x = turtle.Turtle()
+        x.pencolor= ("blue")
+        x.goto(0,0)
+        x.write(i+1, font=(0.0000001))
+        x.penup()
+        x.goto(2000,2000)
+        time.sleep(1)
+        wn.update()
+        x.clear()
     end_timer = time()
     pygame.mixer.music.load("./Music/SoundTest.wav")
     pygame.mixer.music.play(-1)
@@ -286,7 +287,8 @@ if __name__ == "__main__":
                 else:
                     turtle.clear()
                     turtle.goto(-50,300)
-                    turtle.write("Player Gold:{}".format(player.gold),align="right",font=(0.0000001))
+                    turtle.write("Player Gold:{}".format(player.gold),align="right",
+                                 font=(0.0000001))
                     turtle.goto(2000,2000)
                     treasure.destroy()
                     wn.update()
