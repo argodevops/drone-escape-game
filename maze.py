@@ -5,6 +5,7 @@ import time
 import pygame
 import json
 import random
+import re
 import sys
 from numpy import array
 
@@ -44,6 +45,7 @@ class Drone(turtle.Turtle):
         self.penup()
         self.speed(0)
         self.gold = 0
+        self.direction = 'UP'
 
     def go_up(self, count=1):
         """_summary_
@@ -51,11 +53,14 @@ class Drone(turtle.Turtle):
         Args:
             count (int, optional): _description_. Defaults to 1.
         """
-        move_to_x = player.xcor()
-        move_to_y = player.ycor() + (count * STEP_COUNT)
+        move_to_x = self.xcor()
+        move_to_y = self.ycor() + (count * STEP_COUNT)
 
         if (move_to_x, move_to_y) not in walls:
             self.goto(move_to_x, move_to_y)
+            return True
+        else:
+            return False;
 
     def go_down(self, count=1):
         """_summary_
@@ -63,11 +68,14 @@ class Drone(turtle.Turtle):
         Args:
             count (int, optional): _description_. Defaults to 1.
         """
-        move_to_x = player.xcor()
-        move_to_y = player.ycor() - (count * STEP_COUNT)
+        move_to_x = self.xcor()
+        move_to_y = self.ycor() - (count * STEP_COUNT)
 
         if (move_to_x, move_to_y) not in walls:
             self.goto(move_to_x, move_to_y)
+            return True
+        else:
+            return False;
 
     def go_left(self, count=1):
         """_summary_
@@ -75,11 +83,14 @@ class Drone(turtle.Turtle):
         Args:
             count (int, optional): _description_. Defaults to 1.
         """
-        move_to_x = player.xcor() - (count * STEP_COUNT)
-        move_to_y = player.ycor()
+        move_to_x = self.xcor() - (count * STEP_COUNT)
+        move_to_y = self.ycor()
 
         if (move_to_x, move_to_y) not in walls:
             self.goto(move_to_x, move_to_y)
+            return True
+        else:
+            return False;
 
     def go_right(self, count=1):
         """_summary_
@@ -87,12 +98,65 @@ class Drone(turtle.Turtle):
         Args:
             count (int, optional): _description_. Defaults to 1.
         """
-        move_to_x = player.xcor() + (count * STEP_COUNT)
-        move_to_y = player.ycor()
-
+        move_to_x = self.xcor() + (count * STEP_COUNT)
+        move_to_y = self.ycor()
         if (move_to_x, move_to_y) not in walls:
             self.goto(move_to_x, move_to_y)
+            return True
+        else:
+            return False;
 
+    def turn(self, turn_direction):
+        print(f" * TURN {turn_direction}")
+        # IDEA - could make directions reverse to make it trickier??
+        if turn_direction == "RIGHT":
+            if self.direction == "UP":
+                self.direction = "RIGHT"
+            elif self.direction == "RIGHT":
+                self.direction = "DOWN"
+            elif self.direction == "DOWN":
+                self.direction = "LEFT"
+            elif self.direction == "LEFT":
+                self.direction = "UP"
+        elif turn_direction == "LEFT":
+            if self.direction == "UP":
+                self.direction = "LEFT"
+            elif self.direction == "RIGHT":
+                self.direction = "UP"
+            elif self.direction == "DOWN":
+                self.direction = "RIGHT"
+            elif self.direction == "LEFT":
+                self.direction = "DOWN"
+        else:
+            print(f"Uknown turn direction {turn_direction}") 
+        
+    def move(self, steps=1):
+        """_summary_
+
+        Args:
+            steps (int, optional): _description_. Defaults to 1.
+        """
+        print(f" * MOVE {steps}")
+        if self.direction == "UP":
+            moved = self.go_up(steps)
+        elif self.direction == "RIGHT":
+            moved = self.go_right(steps)
+        elif self.direction == "DOWN":
+            moved = self.go_down(steps)
+        elif self.direction == "LEFT":
+            moved = self.go_left(steps)
+        else:
+            moved = False
+            print(f"Unknown direction for {steps} steps")
+        
+        if not moved:
+            screen = self.getscreen()
+            screen.register_shape("./image/zombie.gif")
+            self.shape("./image/zombie.gif")
+        wn.update()
+
+        return moved
+        
     # TODO - use collision
     def is_collision(self, other):
         """_summary_
@@ -103,10 +167,11 @@ class Drone(turtle.Turtle):
         Returns:
             _type_: _description_
         """
-        pos_x = self.xcor()-other.xcor()
-        pos_y = self.ycor()-other.ycor()
+        pos_x = self.xcor() - other.xcor()
+        pos_y = self.ycor() - other.ycor()
         distance = math.sqrt((pos_x**2)+(pos_y**2))
         return distance < 5
+
 
 class Treasure(turtle.Turtle):
     """
@@ -124,7 +189,7 @@ class Treasure(turtle.Turtle):
         self.penup()
         self.speed(0)
         self.gold = 100
-        self.goto(x,y)
+        self.goto(x, y)
 
     def destroy(self):
         """_summary_
@@ -197,7 +262,7 @@ def setup_maze(level: array):
     wn.update()
 
     canvas = turtle.getcanvas()
-    canvas.bind('<Motion>', on_click)
+    #canvas.bind('<Motion>', on_click)
 
 
 def on_click(event):
@@ -213,14 +278,14 @@ def on_click(event):
     #     turtle.onscreenclick(lambda x, y: turtle.bgcolor('red'))
 
 
-def countdown_timer():
-    """_summary_
-    """
-    turtle.speed(0)
-    turtle.penup()
-    turtle.clear()
-    turtle.goto(-500, 150)
-    turtle.write((str(int(time.time() - start))) + " seconds", font=("Courier", 18))
+# def countdown_timer():
+#     """_summary_
+#     """
+#     turtle.speed(0)
+#     turtle.penup()
+#     turtle.clear()
+#     turtle.goto(-500, 150)
+#     turtle.write((str(int(time.time() - start))) + " seconds", font=("Courier", 18))
 
 # TODO This needs a refactor!! Is it needed...
 def start_time():
@@ -233,7 +298,7 @@ def start_time():
     pygame.mixer.music.load("./Music/Gameover.wav")
     pygame.mixer.music.play(4)
 
-    start_timer = time()
+    #start_timer = time()
 
     #struct = time.localtime(start_timer)
 
@@ -262,6 +327,33 @@ def start_time():
     pygame.mixer.music.play(-1)
     turtle.clear()
 
+def parse_move_instructions():
+    # TODO parse the intructions to make sure they're valid and report back
+    # ROTATE(90, 180, 270, -90, -180, -270)
+    # FORWARD()
+    pass
+
+#ARGOINT-132-move-commands
+def move_drone(player: Drone):
+    # read commands from file and play them
+    speed = 1
+    with open('assets/sample_commands.txt') as instructions:
+        for instruction in instructions:
+            (command, value) = tuple(re.split(' ', instruction.strip()))
+            if command.upper() == 'TURN':
+                player.turn(value)
+            elif command.upper() == 'MOVE':
+                for _ in range(0, int(value)):
+                    time.sleep(speed)
+                    if not player.move():
+                        turtle.penup()
+                        turtle.goto(-100, 300)
+                        turtle.color("red")
+                        turtle.write("GAME OVER", align="left", font=("Courier", 18))
+                        turtle.goto(2000,2000)
+                        return
+                
+                
 
 if __name__ == "__main__":
     # Set up window
@@ -274,8 +366,8 @@ if __name__ == "__main__":
 
     # Play annoying music
     pygame.mixer.init()
-    pygame.mixer.music.load("./Music/SoundTest.wav")
-    pygame.mixer.music.play(-1)
+    #pygame.mixer.music.load("./Music/SoundTest.wav")
+    #pygame.mixer.music.play(-1)
 
     # Initialise buttons, timer, etc
     pen = Pen()
@@ -295,12 +387,14 @@ if __name__ == "__main__":
     print("Map has been setup")
 
     # TODO turn off keypress and read commands from input
-    turtle.listen()
-    turtle.onkey(player.go_left,"Left")
-    turtle.onkey(player.go_right,"Right")
-    turtle.onkey(player.go_up,"Up")
-    turtle.onkey(player.go_down,"Down")
+    # turtle.listen()
+    # turtle.onkey(player.go_left,"Left")
+    # turtle.onkey(player.go_right,"Right")
+    # turtle.onkey(player.go_up,"Up")
+    # turtle.onkey(player.go_down,"Down")
 
+    move_drone(player)
+    
     gold_left = 3
 
     while True:
@@ -319,7 +413,7 @@ if __name__ == "__main__":
                     treasure.destroy()
                     wn.update()
         try:
-            countdown_timer()
+            #countdown_timer()
             wn.update()
         except Exception:
             print("Exit game")
