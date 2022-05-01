@@ -2,11 +2,11 @@
 import turtle
 import math
 import time
-import pygame
 import json
 import random
 import re
 import sys
+import pygame
 from numpy import array
 
 STEP_COUNT = 24
@@ -63,8 +63,8 @@ class Drone(turtle.Turtle):
         if (move_to_x, move_to_y) not in walls:
             self.goto(move_to_x, move_to_y)
             return True
-        else:
-            return False
+        
+        return False
 
     def go_down(self, count=1):
         """_summary_
@@ -78,8 +78,8 @@ class Drone(turtle.Turtle):
         if (move_to_x, move_to_y) not in walls:
             self.goto(move_to_x, move_to_y)
             return True
-        else:
-            return False
+        
+        return False
 
     def go_left(self, count=1):
         """_summary_
@@ -93,8 +93,8 @@ class Drone(turtle.Turtle):
         if (move_to_x, move_to_y) not in walls:
             self.goto(move_to_x, move_to_y)
             return True
-        else:
-            return False
+        
+        return False
 
     def go_right(self, count=1):
         """_summary_
@@ -107,10 +107,15 @@ class Drone(turtle.Turtle):
         if (move_to_x, move_to_y) not in walls:
             self.goto(move_to_x, move_to_y)
             return True
-        else:
-            return False
+        
+        return False
 
     def turn(self, turn_direction):
+        """_summary_
+
+        Args:
+            turn_direction (_type_): _description_
+        """
         print(f" * TURN {turn_direction}")
         # IDEA - could make directions reverse to make it trickier??
         if turn_direction == "RIGHT":
