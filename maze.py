@@ -11,6 +11,7 @@ from numpy import array
 
 STEP_COUNT = 24
 
+
 class Pen(turtle.Turtle):
     """
     Draws the maze
@@ -18,7 +19,8 @@ class Pen(turtle.Turtle):
     Args:
         turtle (_type_): turtle object
     """
-    def  __init__(self):
+
+    def __init__(self):
         """_summary_
         """
         turtle.Turtle.__init__(self)
@@ -29,6 +31,7 @@ class Pen(turtle.Turtle):
         self.penup()
         self.speed(3)
 
+
 class Drone(turtle.Turtle):
     """
     Moves the drone object
@@ -36,6 +39,7 @@ class Drone(turtle.Turtle):
     Args:
         turtle (_type_): turtle object
     """
+
     def __init__(self):
         turtle.Turtle.__init__(self)
         screen = self.getscreen()
@@ -60,7 +64,7 @@ class Drone(turtle.Turtle):
             self.goto(move_to_x, move_to_y)
             return True
         else:
-            return False;
+            return False
 
     def go_down(self, count=1):
         """_summary_
@@ -75,7 +79,7 @@ class Drone(turtle.Turtle):
             self.goto(move_to_x, move_to_y)
             return True
         else:
-            return False;
+            return False
 
     def go_left(self, count=1):
         """_summary_
@@ -90,7 +94,7 @@ class Drone(turtle.Turtle):
             self.goto(move_to_x, move_to_y)
             return True
         else:
-            return False;
+            return False
 
     def go_right(self, count=1):
         """_summary_
@@ -104,7 +108,7 @@ class Drone(turtle.Turtle):
             self.goto(move_to_x, move_to_y)
             return True
         else:
-            return False;
+            return False
 
     def turn(self, turn_direction):
         print(f" * TURN {turn_direction}")
@@ -128,8 +132,8 @@ class Drone(turtle.Turtle):
             elif self.direction == "LEFT":
                 self.direction = "DOWN"
         else:
-            print(f"Uknown turn direction {turn_direction}") 
-        
+            print(f"Uknown turn direction {turn_direction}")
+
     def move(self, steps=1):
         """_summary_
 
@@ -148,7 +152,7 @@ class Drone(turtle.Turtle):
         else:
             moved = False
             print(f"Unknown direction for {steps} steps")
-        
+
         if not moved:
             screen = self.getscreen()
             screen.register_shape("./image/zombie.gif")
@@ -156,7 +160,7 @@ class Drone(turtle.Turtle):
         wn.update()
 
         return moved
-        
+
     # TODO - use collision
     def is_collision(self, other):
         """_summary_
@@ -169,7 +173,7 @@ class Drone(turtle.Turtle):
         """
         pos_x = self.xcor() - other.xcor()
         pos_y = self.ycor() - other.ycor()
-        distance = math.sqrt((pos_x**2)+(pos_y**2))
+        distance = math.sqrt((pos_x**2) + (pos_y**2))
         return distance < 5
 
 
@@ -180,6 +184,7 @@ class Treasure(turtle.Turtle):
     Args:
         turtle (_type_): turtle object
     """
+
     def __init__(self, x, y):
         turtle.Turtle.__init__(self)
         screen = self.getscreen()
@@ -197,11 +202,19 @@ class Treasure(turtle.Turtle):
         self.goto(2000, 2000)
         self.hideturtle()
 
+
 class Button:
     """
     A button object
     """
-    def __init__(self, message: str, pos_x=-500, pos_y=100, pos_w=150, pos_h=50):
+
+    def __init__(
+            self,
+            message: str,
+            pos_x=-500,
+            pos_y=100,
+            pos_w=150,
+            pos_h=50):
         self.message = message
         self.pos_x = pos_x
         self.pos_y = pos_y
@@ -226,6 +239,7 @@ class Button:
         turtle.goto(self.pos_x + 15, self.pos_y + 15)
         turtle.write(self.message, font=("Courier", 18))
 
+
 def load_maps():
     """_summary_
 
@@ -234,6 +248,7 @@ def load_maps():
     """
     with open('./assets/mazes.json') as maze_file:
         return json.load(maze_file)
+
 
 def setup_maze(level: array):
     """_summary_
@@ -306,18 +321,21 @@ def start_time():
     turtle.penup()
     turtle.goto(10, 300)
     turtle.color("red")
-    turtle.write(" It's a fake gold!!! In to laggy mode!!!",align="left", font=(10))
-    turtle.goto(-50,300)
-    turtle.write("\nRespawn in 5 seconds",align="right", font=(0.0000001))
-    turtle.goto(2000,2000)
+    turtle.write(
+        " It's a fake gold!!! In to laggy mode!!!",
+        align="left",
+        font=(10))
+    turtle.goto(-50, 300)
+    turtle.write("\nRespawn in 5 seconds", align="right", font=(0.0000001))
+    turtle.goto(2000, 2000)
 
     i = 5
-    while i> -1:
-        i-=1
+    while i > -1:
+        i -= 1
         screen = turtle.Turtle()
         screen.pencolor = ("blue")
-        screen.goto(0,0)
-        screen.write(i+1, font=(0.0000001))
+        screen.goto(0, 0)
+        screen.write(i + 1, font=(0.0000001))
         screen.penup()
         screen.goto(2000, 2000)
         time.sleep(1)
@@ -327,15 +345,14 @@ def start_time():
     pygame.mixer.music.play(-1)
     turtle.clear()
 
-def parse_move_instructions():
-    # TODO parse the intructions to make sure they're valid and report back
-    # ROTATE(90, 180, 270, -90, -180, -270)
-    # FORWARD()
-    pass
 
-#ARGOINT-132-move-commands
 def move_drone(player: Drone):
-    # read commands from file and play them
+    """_summary_
+        Read commands and move drone
+    Args:
+        player (Drone): _description_
+    """
+    #
     speed = 1
     with open('assets/sample_commands.txt') as instructions:
         for instruction in instructions:
@@ -349,11 +366,12 @@ def move_drone(player: Drone):
                         turtle.penup()
                         turtle.goto(-100, 300)
                         turtle.color("red")
-                        turtle.write("GAME OVER", align="left", font=("Courier", 18))
-                        turtle.goto(2000,2000)
+                        turtle.write(
+                            "GAME OVER", align="left", font=(
+                                "Courier", 18))
+                        turtle.goto(2000, 2000)
                         return
-                
-                
+
 
 if __name__ == "__main__":
     # Set up window
@@ -366,8 +384,8 @@ if __name__ == "__main__":
 
     # Play annoying music
     pygame.mixer.init()
-    #pygame.mixer.music.load("./Music/SoundTest.wav")
-    #pygame.mixer.music.play(-1)
+    # pygame.mixer.music.load("./Music/SoundTest.wav")
+    # pygame.mixer.music.play(-1)
 
     # Initialise buttons, timer, etc
     pen = Pen()
@@ -394,26 +412,28 @@ if __name__ == "__main__":
     # turtle.onkey(player.go_down,"Down")
 
     move_drone(player)
-    
+
     gold_left = 3
 
     while True:
         for treasure in treasures:
             if player.is_collision(treasure):
                 player.gold += treasure.gold
-                gold_left = gold_left-1
+                gold_left = gold_left - 1
                 print(gold_left)
                 if player.gold == 100:
                     start_time()
                 else:
                     turtle.clear()
-                    turtle.goto(-50,300)
-                    turtle.write(f"Player Gold:{player.gold}", font=(0.0000001))
+                    turtle.goto(-50, 300)
+                    turtle.write(
+                        f"Player Gold:{player.gold}",
+                        font=(0.0000001))
                     turtle.goto(2000, 2000)
                     treasure.destroy()
                     wn.update()
         try:
-            #countdown_timer()
+            # countdown_timer()
             wn.update()
         except Exception:
             print("Exit game")
