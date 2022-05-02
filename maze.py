@@ -221,8 +221,8 @@ def move_drone(player: Drone):
                             "GAME OVER", align="left", font=(
                                 "Courier", 18))
                         turtle.goto(2000, 2000)
-                        return
-                    #wn.update()
+                        return False
+    return True
 
 
 if __name__ == "__main__":
@@ -255,10 +255,8 @@ if __name__ == "__main__":
     player = Drone(walls)
     setup_maze(maps[map_index])
     print("Map has been setup")
-
-    #move_drone(player)
-
     gold_left = 3
+    start_game = True
 
     while True:
         # for treasure in treasures:
@@ -278,8 +276,10 @@ if __name__ == "__main__":
         #             treasure.destroy()
         #             wn.update()
         try:
-            # countdown_timer()
             wn.update()
+            if start_game:
+                move_drone(player)
+                start_game = False
         except Exception:
             print("Exit game")
             sys.exit(0)
