@@ -8,9 +8,7 @@ import re
 import sys
 import pygame
 from numpy import array
-
-STEP_COUNT = 24
-
+from drone import Drone
 
 class Pen(turtle.Turtle):
     """
@@ -30,157 +28,6 @@ class Pen(turtle.Turtle):
         self.color("white")
         self.penup()
         self.speed(3)
-
-
-class Drone(turtle.Turtle):
-    """
-    Moves the drone object
-
-    Args:
-        turtle (_type_): turtle object
-    """
-
-    def __init__(self):
-        turtle.Turtle.__init__(self)
-        screen = self.getscreen()
-        screen.register_shape("./image/drone.gif")
-        self.shape("./image/drone.gif")
-        self.color("blue")
-        self.penup()
-        self.speed(0)
-        self.gold = 0
-        self.direction = 'UP'
-
-    def go_up(self, count=1):
-        """_summary_
-
-        Args:
-            count (int, optional): _description_. Defaults to 1.
-        """
-        move_to_x = self.xcor()
-        move_to_y = self.ycor() + (count * STEP_COUNT)
-
-        if (move_to_x, move_to_y) not in walls:
-            self.goto(move_to_x, move_to_y)
-            return True
-        
-        return False
-
-    def go_down(self, count=1):
-        """_summary_
-
-        Args:
-            count (int, optional): _description_. Defaults to 1.
-        """
-        move_to_x = self.xcor()
-        move_to_y = self.ycor() - (count * STEP_COUNT)
-
-        if (move_to_x, move_to_y) not in walls:
-            self.goto(move_to_x, move_to_y)
-            return True
-        
-        return False
-
-    def go_left(self, count=1):
-        """_summary_
-
-        Args:
-            count (int, optional): _description_. Defaults to 1.
-        """
-        move_to_x = self.xcor() - (count * STEP_COUNT)
-        move_to_y = self.ycor()
-
-        if (move_to_x, move_to_y) not in walls:
-            self.goto(move_to_x, move_to_y)
-            return True
-        
-        return False
-
-    def go_right(self, count=1):
-        """_summary_
-
-        Args:
-            count (int, optional): _description_. Defaults to 1.
-        """
-        move_to_x = self.xcor() + (count * STEP_COUNT)
-        move_to_y = self.ycor()
-        if (move_to_x, move_to_y) not in walls:
-            self.goto(move_to_x, move_to_y)
-            return True
-        
-        return False
-
-    def turn(self, turn_direction):
-        """_summary_
-
-        Args:
-            turn_direction (_type_): _description_
-        """
-        print(f" * TURN {turn_direction}")
-        # IDEA - could make directions reverse to make it trickier??
-        if turn_direction == "RIGHT":
-            if self.direction == "UP":
-                self.direction = "RIGHT"
-            elif self.direction == "RIGHT":
-                self.direction = "DOWN"
-            elif self.direction == "DOWN":
-                self.direction = "LEFT"
-            elif self.direction == "LEFT":
-                self.direction = "UP"
-        elif turn_direction == "LEFT":
-            if self.direction == "UP":
-                self.direction = "LEFT"
-            elif self.direction == "RIGHT":
-                self.direction = "UP"
-            elif self.direction == "DOWN":
-                self.direction = "RIGHT"
-            elif self.direction == "LEFT":
-                self.direction = "DOWN"
-        else:
-            print(f"Uknown turn direction {turn_direction}")
-
-    def move(self, steps=1):
-        """_summary_
-
-        Args:
-            steps (int, optional): _description_. Defaults to 1.
-        """
-        print(f" * MOVE {steps}")
-        if self.direction == "UP":
-            moved = self.go_up(steps)
-        elif self.direction == "RIGHT":
-            moved = self.go_right(steps)
-        elif self.direction == "DOWN":
-            moved = self.go_down(steps)
-        elif self.direction == "LEFT":
-            moved = self.go_left(steps)
-        else:
-            moved = False
-            print(f"Unknown direction for {steps} steps")
-
-        if not moved:
-            screen = self.getscreen()
-            screen.register_shape("./image/zombie.gif")
-            self.shape("./image/zombie.gif")
-        wn.update()
-
-        return moved
-
-    # TODO - use collision
-    def is_collision(self, other):
-        """_summary_
-
-        Args:
-            other (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        pos_x = self.xcor() - other.xcor()
-        pos_y = self.ycor() - other.ycor()
-        distance = math.sqrt((pos_x**2) + (pos_y**2))
-        return distance < 5
-
 
 class Treasure(turtle.Turtle):
     """
@@ -357,7 +204,6 @@ def move_drone(player: Drone):
     Args:
         player (Drone): _description_
     """
-    #
     speed = 1
     with open('assets/sample_commands.txt') as instructions:
         for instruction in instructions:
@@ -376,6 +222,7 @@ def move_drone(player: Drone):
                                 "Courier", 18))
                         turtle.goto(2000, 2000)
                         return
+                    #wn.update()
 
 
 if __name__ == "__main__":
@@ -405,38 +252,31 @@ if __name__ == "__main__":
     maps = load_maps()
     map_index = random.randrange(len(maps))
     print(f"Setting up map using map: {map_index}")
-    player = Drone()
+    player = Drone(walls)
     setup_maze(maps[map_index])
     print("Map has been setup")
 
-    # TODO turn off keypress and read commands from input
-    # turtle.listen()
-    # turtle.onkey(player.go_left,"Left")
-    # turtle.onkey(player.go_right,"Right")
-    # turtle.onkey(player.go_up,"Up")
-    # turtle.onkey(player.go_down,"Down")
-
-    move_drone(player)
+    #move_drone(player)
 
     gold_left = 3
 
     while True:
-        for treasure in treasures:
-            if player.is_collision(treasure):
-                player.gold += treasure.gold
-                gold_left = gold_left - 1
-                print(gold_left)
-                if player.gold == 100:
-                    start_time()
-                else:
-                    turtle.clear()
-                    turtle.goto(-50, 300)
-                    turtle.write(
-                        f"Player Gold:{player.gold}",
-                        font=(0.0000001))
-                    turtle.goto(2000, 2000)
-                    treasure.destroy()
-                    wn.update()
+        # for treasure in treasures:
+        #     if player.is_collision(treasure):
+        #         player.gold += treasure.gold
+        #         gold_left = gold_left - 1
+        #         print(gold_left)
+        #         if player.gold == 100:
+        #             start_time()
+        #         else:
+        #             turtle.clear()
+        #             turtle.goto(-50, 300)
+        #             turtle.write(
+        #                 f"Player Gold:{player.gold}",
+        #                 font=(0.0000001))
+        #             turtle.goto(2000, 2000)
+        #             treasure.destroy()
+        #             wn.update()
         try:
             # countdown_timer()
             wn.update()
