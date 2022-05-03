@@ -7,17 +7,15 @@ A simple maze game which takes a set of turtle commands to navigate a zombie out
 2. Activate the virtual environment: ```source ./.venv/bin/activate```
 3. Install the dependencies: ```pip install -r requirements.txt```
 
-## TODO - an ideas list of things to add to the game
+## TODO - things to add to the game
 
-* Alter the maze layout
-* Add addition maze layouts and select one randomly
-* Need start and exit shown on maze
-* Remove keypress and move zombie via turtle code (textpad area on window where users can add commands?)
-* Start game button
-* Reset game button
-* Add timer
-* Add enemies moving around the maze
-* Hit treasure speeds up zombie
-* Hit zombie or wall slows down zombie
-* Display message when exit within the time allowed
-* Make API call on exit
+* Maze layout - DONE (mazes.json)
+* Need start and exit shown on maze - DONE
+* Remove keypress and move zombie via turtle code (textpad area on window where users can add commands?) - DONE
+* Read commands to move drobe - DONE
+
+* Use Tkinter to draw layout - mjgarli
+* Start game  
+* Reset game 
+
+* Make API call on exit - cpfergu
