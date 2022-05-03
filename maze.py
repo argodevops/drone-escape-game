@@ -2,13 +2,13 @@
 import turtle
 import math
 import time
-import pygame
 import json
 import random
+import re
 import sys
+import pygame
 from numpy import array
-
-STEP_COUNT = 24
+from drone import Drone
 
 class Pen(turtle.Turtle):
     """
@@ -17,7 +17,8 @@ class Pen(turtle.Turtle):
     Args:
         turtle (_type_): turtle object
     """
-    def  __init__(self):
+
+    def __init__(self):
         """_summary_
         """
         turtle.Turtle.__init__(self)
@@ -28,86 +29,6 @@ class Pen(turtle.Turtle):
         self.penup()
         self.speed(3)
 
-class Drone(turtle.Turtle):
-    """
-    Moves the drone object
-
-    Args:
-        turtle (_type_): turtle object
-    """
-    def __init__(self):
-        turtle.Turtle.__init__(self)
-        screen = self.getscreen()
-        screen.register_shape("./image/drone.gif")
-        self.shape("./image/drone.gif")
-        self.color("blue")
-        self.penup()
-        self.speed(0)
-        self.gold = 0
-
-    def go_up(self, count=1):
-        """_summary_
-
-        Args:
-            count (int, optional): _description_. Defaults to 1.
-        """
-        move_to_x = player.xcor()
-        move_to_y = player.ycor() + (count * STEP_COUNT)
-
-        if (move_to_x, move_to_y) not in walls:
-            self.goto(move_to_x, move_to_y)
-
-    def go_down(self, count=1):
-        """_summary_
-
-        Args:
-            count (int, optional): _description_. Defaults to 1.
-        """
-        move_to_x = player.xcor()
-        move_to_y = player.ycor() - (count * STEP_COUNT)
-
-        if (move_to_x, move_to_y) not in walls:
-            self.goto(move_to_x, move_to_y)
-
-    def go_left(self, count=1):
-        """_summary_
-
-        Args:
-            count (int, optional): _description_. Defaults to 1.
-        """
-        move_to_x = player.xcor() - (count * STEP_COUNT)
-        move_to_y = player.ycor()
-
-        if (move_to_x, move_to_y) not in walls:
-            self.goto(move_to_x, move_to_y)
-
-    def go_right(self, count=1):
-        """_summary_
-
-        Args:
-            count (int, optional): _description_. Defaults to 1.
-        """
-        move_to_x = player.xcor() + (count * STEP_COUNT)
-        move_to_y = player.ycor()
-
-        if (move_to_x, move_to_y) not in walls:
-            self.goto(move_to_x, move_to_y)
-
-    # TODO - use collision
-    def is_collision(self, other):
-        """_summary_
-
-        Args:
-            other (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        pos_x = self.xcor()-other.xcor()
-        pos_y = self.ycor()-other.ycor()
-        distance = math.sqrt((pos_x**2)+(pos_y**2))
-        return distance < 5
-
 class Treasure(turtle.Turtle):
     """
     A treasure object
@@ -115,6 +36,7 @@ class Treasure(turtle.Turtle):
     Args:
         turtle (_type_): turtle object
     """
+
     def __init__(self, x, y):
         turtle.Turtle.__init__(self)
         screen = self.getscreen()
@@ -124,7 +46,7 @@ class Treasure(turtle.Turtle):
         self.penup()
         self.speed(0)
         self.gold = 100
-        self.goto(x,y)
+        self.goto(x, y)
 
     def destroy(self):
         """_summary_
@@ -132,11 +54,19 @@ class Treasure(turtle.Turtle):
         self.goto(2000, 2000)
         self.hideturtle()
 
+
 class Button:
     """
     A button object
     """
-    def __init__(self, message: str, pos_x=-500, pos_y=100, pos_w=150, pos_h=50):
+
+    def __init__(
+            self,
+            message: str,
+            pos_x=-500,
+            pos_y=100,
+            pos_w=150,
+            pos_h=50):
         self.message = message
         self.pos_x = pos_x
         self.pos_y = pos_y
@@ -161,6 +91,7 @@ class Button:
         turtle.goto(self.pos_x + 15, self.pos_y + 15)
         turtle.write(self.message, font=("Courier", 18))
 
+
 def load_maps():
     """_summary_
 
@@ -169,6 +100,7 @@ def load_maps():
     """
     with open('./assets/mazes.json') as maze_file:
         return json.load(maze_file)
+
 
 def setup_maze(level: array):
     """_summary_
@@ -197,7 +129,7 @@ def setup_maze(level: array):
     wn.update()
 
     canvas = turtle.getcanvas()
-    canvas.bind('<Motion>', on_click)
+    #canvas.bind('<Motion>', on_click)
 
 
 def on_click(event):
@@ -213,14 +145,14 @@ def on_click(event):
     #     turtle.onscreenclick(lambda x, y: turtle.bgcolor('red'))
 
 
-def countdown_timer():
-    """_summary_
-    """
-    turtle.speed(0)
-    turtle.penup()
-    turtle.clear()
-    turtle.goto(-500, 150)
-    turtle.write((str(int(time.time() - start))) + " seconds", font=("Courier", 18))
+# def countdown_timer():
+#     """_summary_
+#     """
+#     turtle.speed(0)
+#     turtle.penup()
+#     turtle.clear()
+#     turtle.goto(-500, 150)
+#     turtle.write((str(int(time.time() - start))) + " seconds", font=("Courier", 18))
 
 # TODO This needs a refactor!! Is it needed...
 def start_time():
@@ -233,7 +165,7 @@ def start_time():
     pygame.mixer.music.load("./Music/Gameover.wav")
     pygame.mixer.music.play(4)
 
-    start_timer = time()
+    #start_timer = time()
 
     #struct = time.localtime(start_timer)
 
@@ -241,18 +173,21 @@ def start_time():
     turtle.penup()
     turtle.goto(10, 300)
     turtle.color("red")
-    turtle.write(" It's a fake gold!!! In to laggy mode!!!",align="left", font=(10))
-    turtle.goto(-50,300)
-    turtle.write("\nRespawn in 5 seconds",align="right", font=(0.0000001))
-    turtle.goto(2000,2000)
+    turtle.write(
+        " It's a fake gold!!! In to laggy mode!!!",
+        align="left",
+        font=(10))
+    turtle.goto(-50, 300)
+    turtle.write("\nRespawn in 5 seconds", align="right", font=(0.0000001))
+    turtle.goto(2000, 2000)
 
     i = 5
-    while i> -1:
-        i-=1
+    while i > -1:
+        i -= 1
         screen = turtle.Turtle()
         screen.pencolor = ("blue")
-        screen.goto(0,0)
-        screen.write(i+1, font=(0.0000001))
+        screen.goto(0, 0)
+        screen.write(i + 1, font=(0.0000001))
         screen.penup()
         screen.goto(2000, 2000)
         time.sleep(1)
@@ -261,6 +196,33 @@ def start_time():
     pygame.mixer.music.load("./Music/SoundTest.wav")
     pygame.mixer.music.play(-1)
     turtle.clear()
+
+
+def move_drone(player: Drone):
+    """_summary_
+        Read commands and move drone
+    Args:
+        player (Drone): _description_
+    """
+    speed = 1
+    with open('assets/sample_commands.txt') as instructions:
+        for instruction in instructions:
+            (command, value) = tuple(re.split(' ', instruction.strip()))
+            if command.upper() == 'TURN':
+                player.turn(value)
+            elif command.upper() == 'MOVE':
+                for _ in range(0, int(value)):
+                    time.sleep(speed)
+                    if not player.move():
+                        turtle.penup()
+                        turtle.goto(-100, 300)
+                        turtle.color("red")
+                        turtle.write(
+                            "GAME OVER", align="left", font=(
+                                "Courier", 18))
+                        turtle.goto(2000, 2000)
+                        return False
+    return True
 
 
 if __name__ == "__main__":
@@ -274,8 +236,8 @@ if __name__ == "__main__":
 
     # Play annoying music
     pygame.mixer.init()
-    pygame.mixer.music.load("./Music/SoundTest.wav")
-    pygame.mixer.music.play(-1)
+    # pygame.mixer.music.load("./Music/SoundTest.wav")
+    # pygame.mixer.music.play(-1)
 
     # Initialise buttons, timer, etc
     pen = Pen()
@@ -290,37 +252,34 @@ if __name__ == "__main__":
     maps = load_maps()
     map_index = random.randrange(len(maps))
     print(f"Setting up map using map: {map_index}")
-    player = Drone()
+    player = Drone(walls)
     setup_maze(maps[map_index])
     print("Map has been setup")
-
-    # TODO turn off keypress and read commands from input
-    turtle.listen()
-    turtle.onkey(player.go_left,"Left")
-    turtle.onkey(player.go_right,"Right")
-    turtle.onkey(player.go_up,"Up")
-    turtle.onkey(player.go_down,"Down")
-
     gold_left = 3
+    start_game = True
 
     while True:
-        for treasure in treasures:
-            if player.is_collision(treasure):
-                player.gold += treasure.gold
-                gold_left = gold_left-1
-                print(gold_left)
-                if player.gold == 100:
-                    start_time()
-                else:
-                    turtle.clear()
-                    turtle.goto(-50,300)
-                    turtle.write(f"Player Gold:{player.gold}", font=(0.0000001))
-                    turtle.goto(2000, 2000)
-                    treasure.destroy()
-                    wn.update()
+        # for treasure in treasures:
+        #     if player.is_collision(treasure):
+        #         player.gold += treasure.gold
+        #         gold_left = gold_left - 1
+        #         print(gold_left)
+        #         if player.gold == 100:
+        #             start_time()
+        #         else:
+        #             turtle.clear()
+        #             turtle.goto(-50, 300)
+        #             turtle.write(
+        #                 f"Player Gold:{player.gold}",
+        #                 font=(0.0000001))
+        #             turtle.goto(2000, 2000)
+        #             treasure.destroy()
+        #             wn.update()
         try:
-            countdown_timer()
             wn.update()
+            if start_game:
+                move_drone(player)
+                start_game = False
         except Exception:
             print("Exit game")
             sys.exit(0)
