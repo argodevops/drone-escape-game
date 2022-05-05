@@ -243,8 +243,6 @@ if __name__ == "__main__":
     # Initialise buttons, timer, etc
     pen = Pen()
     start = time.time()
-    start_button = Button("Start Game", -500, 100, 150, 50).render(pen)
-    reset_button = Button("Reset Game", -500, 20, 150, 50).render(pen)
 
     walls = []
     treasures = []

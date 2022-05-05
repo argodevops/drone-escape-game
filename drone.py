@@ -109,42 +109,25 @@ class Drone(RawTurtle):
         """
         move_to_x = self.xcor()
         move_to_y = self.ycor() + (count * STEP_COUNT)
-
-        #if (move_to_x, move_to_y) not in self.walls:
-        #    self.goto(move_to_x, move_to_y)
-        #    return True
         return self.processMove(move_to_x, move_to_y)
-        #return False
 
     def go_down(self, count=1):
         """_summary_
-
         Args:
             count (int, optional): _description_. Defaults to 1.
         """
         move_to_x = self.xcor()
         move_to_y = self.ycor() - (count * STEP_COUNT)
-
-        #if (move_to_x, move_to_y) not in self.walls:
-        #    self.goto(move_to_x, move_to_y)
-        #    return True
         return self.processMove(move_to_x, move_to_y)
-        #return False
 
     def go_left(self, count=1):
         """_summary_
-
         Args:
             count (int, optional): _description_. Defaults to 1.
         """
         move_to_x = self.xcor() - (count * STEP_COUNT)
         move_to_y = self.ycor()
-
-        #if (move_to_x, move_to_y) not in self.walls:
-        #    self.goto(move_to_x, move_to_y)
-        #    return True
         return self.processMove(move_to_x, move_to_y)
-        #return False
 
     def go_right(self, count=1):
         """_summary_
@@ -154,11 +137,7 @@ class Drone(RawTurtle):
         """
         move_to_x = self.xcor() + (count * STEP_COUNT)
         move_to_y = self.ycor()
-        #if (move_to_x, move_to_y) not in self.walls:
-        #    self.goto(move_to_x, move_to_y)
-        #    return True
         return self.processMove(move_to_x, move_to_y)
-        #return False
     
     def addKey(self):
         self.keys += 1
