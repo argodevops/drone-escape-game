@@ -39,7 +39,7 @@ class GameObject(RawTurtle):
         self.x = x
         self.y = y
         self.active = True
-    
+
     def destroy(self):
         self.goto(2000,2000)
         self.hideturtle()
@@ -50,10 +50,10 @@ class GameObject(RawTurtle):
         self.goto(self.x, self.y)
         self.active = True
         self.showturtle()
-    
+
     def getX(self):
         return self.x
-    
+
     def getY(self):
         return self.y
 
@@ -61,7 +61,7 @@ class GameObject(RawTurtle):
         return self.active
 
 
-# could have destroyable blocks that the users can destroy with a drones gun?but that may be a bit... aggressive. But it'd 
+# could have destroyable blocks that the users can destroy with a drones gun?but that may be a bit... aggressive. But it'd
 # give even more interesting possibilities.
 class DoorKey(GameObject):
     def __init__(self, x, y, screen):
@@ -82,7 +82,7 @@ class Door(GameObject):
     def destroy(self):
         self.active = False
         self.shape("./image/opendoor.gif")
-    
+
     def respawn(self):
         self.active = True
         self.shape("./image/door.gif")
@@ -226,7 +226,7 @@ def move_drone(player: Drone, instructions):
         else:
             executingtext.insert(END, 'Unknown command ' + instruction)
             executingtext.see("end")
-            # could disable run button or highlight text red etc? 
+            # could disable run button or highlight text red etc?
             player.dead()
             gameover()
             return False
@@ -234,14 +234,14 @@ def move_drone(player: Drone, instructions):
     return True
 
 # take user input and run commands on the map (clear executingtext textbox first)
-# performs check to ensure dead players can't move. Could disable run button instead when dead but... 
+# performs check to ensure dead players can't move. Could disable run button instead when dead but...
 def run():
     if player.playerDead(): # check they're not just re-running commands without resetting after failing.
         return
     executingtext.delete('1.0', END) # clear textbox
-    # "get" apparently adds newline character to end, so get from start to -1 of end; splitlines splits around newline. 
+    # "get" apparently adds newline character to end, so get from start to -1 of end; splitlines splits around newline.
     theText = inputtext.get('1.0', 'end-1c').splitlines()
-    move_drone(player, theText)    
+    move_drone(player, theText)
 
 # just clear out text of commands/output
 def clear():
@@ -280,19 +280,19 @@ def reset():
         laser.respawn()
     for destructible in destructibles:
         destructible.respawn()
-    global gamewon 
+    global gamewon
     gamewon = False
     turtle.clear() # this is the "game over" pen being cleared of any writing done.
-    
+
 # Should remove commands entered/ran from Textboxes.
 # It DESTROYS all turtle objects via calling clear on the screen. This means they need recreating.
 # turtlescreen.clear therefore destroys player, treasures, doors, keys, and the wall drawing "pen" turtle.
 # Must therefore create player, the turtle to draw the maze (the creation of maze creates treasures/doors/keys turtle)
-# Therefore has to clear the lists that are passed to the player/drone Turtle prior to creating from map. 
+# Therefore has to clear the lists that are passed to the player/drone Turtle prior to creating from map.
 def startnew():
     # buttonrun["state"] = NORMAL
     clear()
-    # clear DELETES all turtles... this includes player/pen turtles. 
+    # clear DELETES all turtles... this includes player/pen turtles.
     turtlescreen.clear()
     turtlescreen.bgcolor("cyan")
     # turn off animation (for insta maze draw)
@@ -307,6 +307,7 @@ def startnew():
     global player
     pen = Pen(turtlescreen)
     player = Drone(walls, keys, doors, treasures, destructibles, gun, turtlescreen)
+    canvas.tag_raise(player)
     # set up maze (also creates treasures turtles)
     setup_maze(maps[random.randrange(len(maps))])
     # Game over message printing, perhaps change this to something else.
@@ -323,20 +324,20 @@ def startnew():
 def exit():
     sys.exit(0)
 
-# main command? 
+# main command?
 # TODO extract out the load of map to function
 if __name__ == "__main__":
   #set up properties
     root = Tk()
     root.title("Game")
-    root.geometry('1650x950')  
-    # weights supposed to proportion available real-estate appropriately. 
+    root.geometry('1650x950')
+    # weights supposed to proportion available real-estate appropriately.
     root.grid_columnconfigure(0, weight=2)
     root.grid_columnconfigure(1, weight=6)
     root.grid_columnconfigure(2, weight=2)
     root.grid_rowconfigure(0, weight=2)
     root.grid_rowconfigure(1, weight=5)
-    root.grid_rowconfigure(2, weight=3)    
+    root.grid_rowconfigure(2, weight=3)
     # bg colour just to see spaces on resize etc. Can make all uniform.
     frametop = Frame(root, height=50)
     framebottom = Frame(root, bg='orange')
@@ -347,7 +348,7 @@ if __name__ == "__main__":
     frameright = Frame(root)
     frameright.grid(column=2, row=1, sticky='n')
 
-    # create top frame widget    
+    # create top frame widget
     titlelabel = Label(frametop, text="Maze Game", font=('Arial', 25))
     titlelabel.grid(column=0, row=0)
     label = Label(frametop, text="Write your commands in text box and click run")
@@ -389,12 +390,12 @@ if __name__ == "__main__":
     legend.create_image(20, 340, image=destructibleimage, anchor=NW)
     legend.create_text(90, 345, text="Destructible wall (need laser)", anchor=NW)
 
-    # GAME CANVAS   
+    # GAME CANVAS
     canvas = Canvas(root)
     canvas.grid(column=1, row=1, sticky='nw')
-    canvas.config(width=900, height=700) 
+    canvas.config(width=900, height=700)
 
-    # LEFT FRAME (Commands box + buttons)    
+    # LEFT FRAME (Commands box + buttons)
     commandslabel = Label(frameleft, text="Commands Entry List", font=('Arial', 15))
     commandslabel.grid(column=0, row=0, sticky="new")
     inputtext = Text(frameleft, height=30, width=40)

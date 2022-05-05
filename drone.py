@@ -16,7 +16,7 @@ class Drone(RawTurtle):
     Args:
         turtle (_type_): turtle object
     """
-
+    # following convention but this is not ideal. Just making it work.
     def __init__(self, walls, keyset, doors, treasures, destructibles, guns, screen):
         RawTurtle.__init__(self, screen)
         screen.register_shape("./image/drone.gif")
@@ -47,14 +47,14 @@ class Drone(RawTurtle):
         self.keys = 0
         self.haslaser = False
 
-    def processGold(self):
-        if (self.gold > 0):
+    def processgold(self):
+        if self.gold > 0:
             self.gold -= 1
-        if (self.gold <= 0):
+        if self.gold <= 0:
             self.delay = 1
 
-    def processMove(self, x, y):
-        self.processGold()
+    def processmove(self, x, y):
+        self.processgold()
         # did we collide with a wall?
         if (x, y) in self.walls:
             return False
@@ -87,12 +87,12 @@ class Drone(RawTurtle):
                 key.destroy()
 
         for door in self.doors:
-            if (door.getX() == x and door.getY() == y):
+            if (door.getX() == x and door.getY() == y and door.isActive()):
                  # could check door locked or not and set open etc instead of destroying door, where destroy for door overrides and changes icon?
                 print("Door coords " + str(door.getX()) + " " + str(door.getY()))
-                if (self.keys == 0):
+                if self.keys == 0:
                     print('No keys, locked door')
-                    return False # locked door no key 
+                    return False # locked door no key
                 else:
                     print("Have" + str(self.keys) + " available, using one")
                     self.keys -= 1
@@ -109,7 +109,7 @@ class Drone(RawTurtle):
         """
         move_to_x = self.xcor()
         move_to_y = self.ycor() + (count * STEP_COUNT)
-        return self.processMove(move_to_x, move_to_y)
+        return self.processmove(move_to_x, move_to_y)
 
     def go_down(self, count=1):
         """_summary_
@@ -118,7 +118,7 @@ class Drone(RawTurtle):
         """
         move_to_x = self.xcor()
         move_to_y = self.ycor() - (count * STEP_COUNT)
-        return self.processMove(move_to_x, move_to_y)
+        return self.processmove(move_to_x, move_to_y)
 
     def go_left(self, count=1):
         """_summary_
@@ -127,7 +127,7 @@ class Drone(RawTurtle):
         """
         move_to_x = self.xcor() - (count * STEP_COUNT)
         move_to_y = self.ycor()
-        return self.processMove(move_to_x, move_to_y)
+        return self.processmove(move_to_x, move_to_y)
 
     def go_right(self, count=1):
         """_summary_
@@ -137,32 +137,20 @@ class Drone(RawTurtle):
         """
         move_to_x = self.xcor() + (count * STEP_COUNT)
         move_to_y = self.ycor()
-        return self.processMove(move_to_x, move_to_y)
-    
-    def addKey(self):
-        self.keys += 1
-
-    def hasKey(self):
-        return self.keys
-
-    def useKey(self):
-        if self.hasKey():
-            self.keys -= 1
-            return True
-        return False
+        return self.processmove(move_to_x, move_to_y)
 
     def shoot(self):
-        if (not self.haslaser):
-            return 
+        if not self.haslaser:
+            return
         blockx = self.xcor()
         blocky = self.ycor()
-        if (self.direction == "UP"):
+        if self.direction == "UP":
             blocky += 24
-        elif (self.direction == "DOWN"):
+        elif self.direction == "DOWN":
             blocky -= 24
-        elif (self.direction == "RIGHT"):
+        elif self.direction == "RIGHT":
             blockx += 24
-        elif (self.direction == "LEFT"):
+        elif self.direction == "LEFT":
             blockx -= 24
 
         for destructible in self.destructibles:
@@ -170,7 +158,7 @@ class Drone(RawTurtle):
                 destructible.destroy()
 
     def turn(self, turn_direction):
-        self.processGold()
+        self.processgold()
         """_summary_
 
         Args:
