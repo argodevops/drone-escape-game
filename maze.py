@@ -1,6 +1,6 @@
 """Maze module."""
 from turtle import RawTurtle, TurtleScreen
-#from tkinter import *
+from tkinter import *
 from tkinter import scrolledtext
 import sys
 import time
