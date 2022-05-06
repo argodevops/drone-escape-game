@@ -111,7 +111,7 @@ def setup_maze(level: array):
     for pos_y in range(len(level)):
         for pos_x in range(len(level[pos_y])):
             character = level[pos_y][pos_x]
-            print(f"Parsing position {pos_x}, {pos_y}: {character}")
+            #print(f"Parsing position {pos_x}, {pos_y}: {character}")
             maze_x = -288 + (pos_x * 24)
             maze_y = 288 - (pos_y * 24)
 
@@ -128,7 +128,7 @@ def setup_maze(level: array):
                 print(f"Goal defined at {pos_x}, {pos_y}")
     wn.update()
 
-    canvas = turtle.getcanvas()
+    #canvas = turtle.getcanvas()
     #canvas.bind('<Motion>', on_click)
 
 
@@ -158,6 +158,7 @@ def on_click(event):
 def start_time():
     """_summary_
     """
+
     treasure.destroy()
     treasures.remove(treasure)
     wn.update()
@@ -236,14 +237,12 @@ if __name__ == "__main__":
 
     # Play annoying music
     pygame.mixer.init()
-    # pygame.mixer.music.load("./Music/SoundTest.wav")
-    # pygame.mixer.music.play(-1)
+    #pygame.mixer.music.load("./Music/SoundTest.wav")
+    #pygame.mixer.music.play(-1)
 
     # Initialise buttons, timer, etc
     pen = Pen()
     start = time.time()
-    start_button = Button("Start Game", -500, 100, 150, 50).render(pen)
-    reset_button = Button("Reset Game", -500, 20, 150, 50).render(pen)
 
     walls = []
     treasures = []
