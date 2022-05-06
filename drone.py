@@ -89,19 +89,19 @@ class Drone(RawTurtle):
         # and then act on type?
         # pick up laser.
         for gun in self.guns:
-            if (gun.get_x() == pos_x and gun.get_y() == pos_y and gun.isActive()):
+            if (gun.get_x() == pos_x and gun.get_y() == pos_y and gun.is_active()):
                 self.haslaser = True
                 gun.destroy()
 
         # ran into destructible wall?
         for destructible in self.destructibles:
             if (destructible.get_x() == pos_x and destructible.get_y()
-                    == pos_y and destructible.isActive()):
+                    == pos_y and destructible.is_active()):
                 return False
 
         for treasure in self.treasures:
             if (treasure.get_x() == pos_x and treasure.get_y()
-                    == pos_y and treasure.isActive()):
+                    == pos_y and treasure.is_active()):
                 treasure.destroy()
                 # 20s at 0.5 delay, 40 moves basically... and turns are a move
                 # too.
@@ -111,14 +111,14 @@ class Drone(RawTurtle):
                 self.delay = 0.5
 
         for key in self.keyset:
-            if (key.get_x() == pos_x and key.get_y() == pos_y and key.isActive()):
+            if (key.get_x() == pos_x and key.get_y() == pos_y and key.is_active()):
                 print("Key coords " + str(key.get_x()) + " " + str(key.get_y()))
                 self.keys += 1
                 key.destroy()
 
         for door in self.doors:
             if (door.get_x() == pos_x and door.get_y()
-                    == pos_y and door.isActive()):
+                    == pos_y and door.is_active()):
                 # could check door locked or not and set open etc instead of
                 # destroying door, where destroy for door overrides and changes
                 # icon?
@@ -191,7 +191,7 @@ class Drone(RawTurtle):
 
         for destructible in self.destructibles:
             if (blockx == destructible.get_x() and blocky ==
-                    destructible.get_y() and destructible.isActive()):
+                    destructible.get_y() and destructible.is_active()):
                 destructible.destroy()
 
     def turn(self, turn_direction):

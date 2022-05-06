@@ -34,33 +34,66 @@ class Pen(RawTurtle):
 
 
 class GameObject(RawTurtle):
+    """
+    Base game object.
+
+    Args:
+        RawTurtle (_type_): _description_
+    """
     def __init__(self, pos_x, pos_y, screen):
+        """
+        Constructor
+
+        Args:
+            pos_x (_type_): _description_
+            pos_y (_type_): _description_
+            screen (_type_): _description_
+        """
         super().__init__(screen)
         self.penup()
         self.speed(0)
         self.goto(pos_x, pos_y)
-        self.x = pos_x
-        self.y = pos_y
+        self.pos_x = pos_x
+        self.pos_y = pos_y
         self.active = True
 
     def destroy(self):
+        """Destroy game object (but not really)
+        """
         self.goto(2000, 2000)
         self.hideturtle()
         self.active = False
 
     def respawn(self):
+        """Respawn and show game object
+        """
         self.penup()
-        self.goto(self.x, self.y)
+        self.goto(self.pos_x, self.pos_y)
         self.active = True
         self.showturtle()
 
     def get_x(self):
-        return self.x
+        """Get x coord
+
+        Returns:
+            _type_: _description_
+        """
+        return self.pos_x
 
     def get_y(self):
-        return self.y
+        """Get y coord
 
-    def isActive(self):
+        Returns:
+            _type_: _description_
+        """
+        return self.pos_y
+
+    def is_active(self):
+        """Is game object active
+
+        Returns:
+            _type_: _description_
+        """
         return self.active
 
 
@@ -414,8 +447,8 @@ def startnew():
 # X on window this is unnecessary...
 
 
-def exit():
-    sys.exit(0)
+# def exit():
+#     sys.exit(0)
 
 
 # main command?
