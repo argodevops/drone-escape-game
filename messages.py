@@ -1,6 +1,8 @@
+
 import requests
 
-
 def win():
-    # change this to call the win endpoint
+    """_summary_
+        Call endpoint to signal a game win
+    """
     requests.post('http://localhost:80')

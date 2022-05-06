@@ -1,4 +1,3 @@
-
 import time
 import turtle
 from turtle import RawTurtle
@@ -8,7 +7,6 @@ from numpy import array
 STEP_COUNT = 24
 
 # Not a fan of Drone (player) knowing locations of everything in maze and deciding himself what happens; seems backwards.
-
 
 class Drone(RawTurtle):
     """
@@ -39,6 +37,9 @@ class Drone(RawTurtle):
         self.haslaser = False
 
     def reset(self):
+        """
+        Resets everything
+        """
         self.shape("./image/drone.gif")
         self.color("blue")
         self.penup()
@@ -50,12 +51,23 @@ class Drone(RawTurtle):
         self.haslaser = False
 
     def processgold(self):
+        """
+        """
         if self.gold > 0:
             self.gold -= 1
         if self.gold <= 0:
             self.delay = 1
 
     def processmove(self, x, y):
+        """
+
+        Args:
+            x (_type_): _description_
+            y (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         self.processgold()
         # did we collide with a wall?
         if (x, y) in self.walls:
@@ -143,6 +155,8 @@ class Drone(RawTurtle):
         return self.processmove(move_to_x, move_to_y)
 
     def shoot(self):
+        """
+        """
         if not self.haslaser:
             return
         blockx = self.xcor()
@@ -161,12 +175,12 @@ class Drone(RawTurtle):
                 destructible.destroy()
 
     def turn(self, turn_direction):
-        self.processgold()
         """_summary_
 
         Args:
             turn_direction (_type_): _description_
         """
+        self.processgold()
         turn_direction = turn_direction.upper()
         print(f" * TURN {turn_direction}")
         if turn_direction == "RIGHT":
@@ -191,6 +205,8 @@ class Drone(RawTurtle):
             print(f"Unknown turn direction {turn_direction}")
 
     def dead(self):
+        """_summary_
+        """
         screen = self.getscreen()
         screen.register_shape("./image/zombie.gif")
         self.shape("./image/zombie.gif")
@@ -199,6 +215,11 @@ class Drone(RawTurtle):
         self.delay = 1
 
     def playerDead(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
         return self.isdead
 
     def move(self, steps=1):
