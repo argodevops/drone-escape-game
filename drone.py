@@ -1,8 +1,7 @@
+"""Drone module."""
 import time
-import turtle
 from turtle import RawTurtle
 import math
-from numpy import array
 
 STEP_COUNT = 24
 
@@ -128,10 +127,10 @@ class Drone(RawTurtle):
                 if self.keys == 0:
                     print('No keys, locked door')
                     return False  # locked door no key
-                else:
-                    print("Have" + str(self.keys) + " available, using one")
-                    self.keys -= 1
-                    door.destroy()
+
+                print("Have" + str(self.keys) + " available, using one")
+                self.keys -= 1
+                door.destroy()
         # continue on!
         self.goto(pos_x, pos_y)
         return True
