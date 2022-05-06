@@ -139,7 +139,8 @@ def setup_maze(level: array):
     Args:
         level (array): _description_
     """
-    # don't draw lines as you draw the maze... but anim is disabled during maze creation for "insta appear"
+    # don't draw lines as you draw the maze... but anim is disabled during
+    # maze creation for "insta appear"
     pen.penup()
     player.hideturtle()
     for pos_y in range(len(level)):
@@ -207,7 +208,7 @@ def gameover():
 
 def update_timer():
     print("update timer")
-    while start_game == True:
+    while start_game:
         timerlabel['text'] = 'update....'
         time.sleep(1)
         print("update timer")
@@ -230,11 +231,13 @@ def move_drone(player: Drone, instructions):
     for instruction in instructions:
         if gamewon:
             continue
-        # quick/dirty check to ignore empty lines. Prevents crash due to players hitting "enter" after last entered command.
+        # quick/dirty check to ignore empty lines. Prevents crash due to
+        # players hitting "enter" after last entered command.
         if len(instruction) == 0:
             continue
         (command, value) = tuple(re.split(' ', instruction.strip()))
-        # append whatever command is about to be run into the executing box and MOVE the box to end (scrollable box)
+        # append whatever command is about to be run into the executing box and
+        # MOVE the box to end (scrollable box)
         executingtext.insert(END, instruction + '\n')
         executingtext.update()
         executingtext.see("end")
@@ -244,7 +247,8 @@ def move_drone(player: Drone, instructions):
             player.turn(value)
         elif command.upper() == 'MOVE':
             for _ in range(0, int(value)):
-                if player.xcor() == gameexit[0] and player.ycor() == gameexit[1]:
+                if player.xcor() == gameexit[0] and player.ycor(
+                ) == gameexit[1]:
                     wingame()
                     return
                 #global speed
@@ -266,12 +270,14 @@ def move_drone(player: Drone, instructions):
     return True
 
 # take user input and run commands on the map (clear executingtext textbox first)
-# performs check to ensure dead players can't move. Could disable run button instead when dead but...
+# performs check to ensure dead players can't move. Could disable run
+# button instead when dead but...
 
 
 def run():
-    # check they're not just re-running commands without resetting after failing.
-    if player.playerDead():
+    # check they're not just re-running commands without resetting after
+    # failing.
+    if player.player_dead():
         return
     executingtext.delete('1.0', END)  # clear textbox
     # "get" apparently adds newline character to end, so get from start to -1 of end; splitlines splits around newline.
@@ -341,7 +347,8 @@ def wingame():
 
 
 def reset():
-    # buttonrun["state"] = NORMAL # if you disable button, then this is how to re-enable
+    # buttonrun["state"] = NORMAL # if you disable button, then this is how to
+    # re-enable
     player.reset()
     player.goto(player_pos[0], player_pos[1])
     for treasure in treasures:
@@ -363,7 +370,8 @@ def reset():
 # It DESTROYS all turtle objects via calling clear on the screen. This means they need recreating.
 # turtlescreen.clear therefore destroys player, treasures, doors, keys, and the wall drawing "pen" turtle.
 # Must therefore create player, the turtle to draw the maze (the creation of maze creates treasures/doors/keys turtle)
-# Therefore has to clear the lists that are passed to the player/drone Turtle prior to creating from map.
+# Therefore has to clear the lists that are passed to the player/drone
+# Turtle prior to creating from map.
 
 
 def startnew():
@@ -379,7 +387,8 @@ def startnew():
     treasures.clear()
     destructibles.clear()
     gun.clear()
-    # we need to refer to global pen/player lest fan and x attempt merge, and so create new turtles
+    # we need to refer to global pen/player lest fan and x attempt merge, and
+    # so create new turtles
     global pen
     global player
     pen = Pen(turtlescreen)
@@ -390,7 +399,8 @@ def startnew():
     setup_maze(maps[random.randrange(len(maps))])
     # Game over message printing, perhaps change this to something else.
     global turtle
-    # as this is the "game over" message pen, associated with the screen, recreate.
+    # as this is the "game over" message pen, associated with the screen,
+    # recreate.
     turtle = RawTurtle(turtlescreen)
     turtle.penup()
     turtle.hideturtle()
@@ -399,7 +409,8 @@ def startnew():
     global gamewon
     gamewon = False
 
-# Incase of button to exit addition for now? Reality is you can just click X on window this is unnecessary...
+# Incase of button to exit addition for now? Reality is you can just click
+# X on window this is unnecessary...
 
 
 def exit():
@@ -498,7 +509,8 @@ if __name__ == "__main__":
                        font=('Arial', 15), height=2)
     timerlabel.grid(row=8, column=0, sticky='esw')
 
-    # BOTTOM FRAME (scrollable executing command window) -- simply indicates last command incase of errors.
+    # BOTTOM FRAME (scrollable executing command window) -- simply indicates
+    # last command incase of errors.
     executingtext = scrolledtext.ScrolledText(
         framebottom, height=10, width=112, wrap=WORD)
     executingtext.grid(row=0, column=0, sticky='news')
@@ -524,7 +536,8 @@ if __name__ == "__main__":
     keys = []
     destructibles = []
     gun = []
-    # player position as [x,y] pair in list; global so we can reset player position.
+    # player position as [x,y] pair in list; global so we can reset player
+    # position.
     player_pos = []
     speed = 1
     gamewon = False

@@ -6,7 +6,9 @@ from numpy import array
 
 STEP_COUNT = 24
 
-# Not a fan of Drone (player) knowing locations of everything in maze and deciding himself what happens; seems backwards.
+# Not a fan of Drone (player) knowing locations of everything in maze and
+# deciding himself what happens; seems backwards.
+
 
 class Drone(RawTurtle):
     """
@@ -17,7 +19,15 @@ class Drone(RawTurtle):
     """
     # following convention but this is not ideal. Just making it work.
 
-    def __init__(self, walls, keyset, doors, treasures, destructibles, guns, screen):
+    def __init__(
+            self,
+            walls,
+            keyset,
+            doors,
+            treasures,
+            destructibles,
+            guns,
+            screen):
         RawTurtle.__init__(self, screen)
         screen.register_shape("./image/drone.gif")
         self.reset()
@@ -25,7 +35,8 @@ class Drone(RawTurtle):
         self.hideturtle()
         self.isdead = False
         self.direction = 'UP'
-        # so player knows walls rather than game decides, so will need to know other things.
+        # so player knows walls rather than game decides, so will need to know
+        # other things.
         self.keys = 0
         self.gold = 0
         self.keyset = keyset
@@ -52,14 +63,16 @@ class Drone(RawTurtle):
 
     def processgold(self):
         """
+        Gold speed up
         """
         if self.gold > 0:
             self.gold -= 1
         if self.gold <= 0:
             self.delay = 1
 
-    def processmove(self, x, y):
+    def processmove(self, pos_x, pos_y):
         """
+        Process move coords
 
         Args:
             x (_type_): _description_
@@ -70,7 +83,7 @@ class Drone(RawTurtle):
         """
         self.processgold()
         # did we collide with a wall?
-        if (x, y) in self.walls:
+        if (pos_x, pos_y) in self.walls:
             return False
         time.sleep(self.delay)
         # this is going to be messy... but make it work first and foremost, refactor later.
@@ -78,32 +91,39 @@ class Drone(RawTurtle):
         # and then act on type?
         # pick up laser.
         for gun in self.guns:
-            if (gun.getX() == x and gun.getY() == y and gun.isActive()):
+            if (gun.getX() == pos_x and gun.getY() == pos_y and gun.isActive()):
                 self.haslaser = True
                 gun.destroy()
 
         # ran into destructible wall?
         for destructible in self.destructibles:
-            if (destructible.getX() == x and destructible.getY() == y and destructible.isActive()):
+            if (destructible.getX() == pos_x and destructible.getY()
+                    == pos_y and destructible.isActive()):
                 return False
 
         for treasure in self.treasures:
-            if (treasure.getX() == x and treasure.getY() == y and treasure.isActive()):
+            if (treasure.getX() == pos_x and treasure.getY()
+                    == pos_y and treasure.isActive()):
                 treasure.destroy()
-                # 20s at 0.5 delay, 40 moves basically... and turns are a move too.
+                # 20s at 0.5 delay, 40 moves basically... and turns are a move
+                # too.
                 self.gold += 40
-                # depending on map it may take longer to collect and return gold than to ignore it.
+                # depending on map it may take longer to collect and return
+                # gold than to ignore it.
                 self.delay = 0.5
 
         for key in self.keyset:
-            if (key.getX() == x and key.getY() == y and key.isActive()):
+            if (key.getX() == pos_x and key.getY() == pos_y and key.isActive()):
                 print("Key coords " + str(key.getX()) + " " + str(key.getY()))
                 self.keys += 1
                 key.destroy()
 
         for door in self.doors:
-            if (door.getX() == x and door.getY() == y and door.isActive()):
-                # could check door locked or not and set open etc instead of destroying door, where destroy for door overrides and changes icon?
+            if (door.getX() == pos_x and door.getY()
+                    == pos_y and door.isActive()):
+                # could check door locked or not and set open etc instead of
+                # destroying door, where destroy for door overrides and changes
+                # icon?
                 print("Door coords " + str(door.getX()) + " " + str(door.getY()))
                 if self.keys == 0:
                     print('No keys, locked door')
@@ -113,7 +133,7 @@ class Drone(RawTurtle):
                     self.keys -= 1
                     door.destroy()
         # continue on!
-        self.goto(x, y)
+        self.goto(pos_x, pos_y)
         return True
 
     def go_up(self, count=1):
@@ -156,6 +176,7 @@ class Drone(RawTurtle):
 
     def shoot(self):
         """
+        Shoots block
         """
         if not self.haslaser:
             return
@@ -171,7 +192,8 @@ class Drone(RawTurtle):
             blockx -= 24
 
         for destructible in self.destructibles:
-            if (blockx == destructible.getX() and blocky == destructible.getY() and destructible.isActive()):
+            if (blockx == destructible.getX() and blocky ==
+                    destructible.getY() and destructible.isActive()):
                 destructible.destroy()
 
     def turn(self, turn_direction):
@@ -214,7 +236,7 @@ class Drone(RawTurtle):
         self.gold = 0
         self.delay = 1
 
-    def playerDead(self):
+    def player_dead(self):
         """_summary_
 
         Returns:
