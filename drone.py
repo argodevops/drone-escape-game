@@ -164,8 +164,8 @@ class Drone(RawTurtle):
         Args:
             turn_direction (_type_): _description_
         """
+        turn_direction = turn_direction.upper()
         print(f" * TURN {turn_direction}")
-        # IDEA - could make directions reverse to make it trickier??
         if turn_direction == "RIGHT":
             if self.direction == "UP":
                 self.direction = "RIGHT"
