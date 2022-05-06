@@ -9,6 +9,7 @@ STEP_COUNT = 24
 
 # Not a fan of Drone (player) knowing locations of everything in maze and deciding himself what happens; seems backwards.
 
+
 class Drone(RawTurtle):
     """
     Moves the drone object
@@ -17,6 +18,7 @@ class Drone(RawTurtle):
         turtle (_type_): turtle object
     """
     # following convention but this is not ideal. Just making it work.
+
     def __init__(self, walls, keyset, doors, treasures, destructibles, guns, screen):
         RawTurtle.__init__(self, screen)
         screen.register_shape("./image/drone.gif")
@@ -68,7 +70,7 @@ class Drone(RawTurtle):
                 self.haslaser = True
                 gun.destroy()
 
-        #ran into destructible wall?
+        # ran into destructible wall?
         for destructible in self.destructibles:
             if (destructible.getX() == x and destructible.getY() == y and destructible.isActive()):
                 return False
@@ -76,7 +78,8 @@ class Drone(RawTurtle):
         for treasure in self.treasures:
             if (treasure.getX() == x and treasure.getY() == y and treasure.isActive()):
                 treasure.destroy()
-                self.gold += 40 # 20s at 0.5 delay, 40 moves basically... and turns are a move too.
+                # 20s at 0.5 delay, 40 moves basically... and turns are a move too.
+                self.gold += 40
                 # depending on map it may take longer to collect and return gold than to ignore it.
                 self.delay = 0.5
 
@@ -88,17 +91,17 @@ class Drone(RawTurtle):
 
         for door in self.doors:
             if (door.getX() == x and door.getY() == y and door.isActive()):
-                 # could check door locked or not and set open etc instead of destroying door, where destroy for door overrides and changes icon?
+                # could check door locked or not and set open etc instead of destroying door, where destroy for door overrides and changes icon?
                 print("Door coords " + str(door.getX()) + " " + str(door.getY()))
                 if self.keys == 0:
                     print('No keys, locked door')
-                    return False # locked door no key
+                    return False  # locked door no key
                 else:
                     print("Have" + str(self.keys) + " available, using one")
                     self.keys -= 1
                     door.destroy()
         # continue on!
-        self.goto(x,y)
+        self.goto(x, y)
         return True
 
     def go_up(self, count=1):
@@ -219,7 +222,7 @@ class Drone(RawTurtle):
 
         if not moved:
             self.dead()
-        #wn.update()
+        # wn.update()
 
         return moved
 

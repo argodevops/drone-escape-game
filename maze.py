@@ -13,6 +13,7 @@ from drone import Drone
 import messages
 import threading
 
+
 class Pen(RawTurtle):
     """
     Draws the maze
@@ -31,6 +32,7 @@ class Pen(RawTurtle):
         self.penup()  # don't draw lines as turtle moves.
         self.speed(3)
 
+
 class GameObject(RawTurtle):
     def __init__(self, x, y, screen):
         super().__init__(screen)
@@ -42,7 +44,7 @@ class GameObject(RawTurtle):
         self.active = True
 
     def destroy(self):
-        self.goto(2000,2000)
+        self.goto(2000, 2000)
         self.hideturtle()
         self.active = False
 
@@ -88,6 +90,7 @@ class Door(GameObject):
         self.active = True
         self.shape("./image/door.gif")
 
+
 class Treasure(GameObject):
     """
     A treasure object
@@ -95,12 +98,14 @@ class Treasure(GameObject):
     Args:
         turtle (_type_): turtle object
     """
+
     def __init__(self, x, y, screen):
         super().__init__(x, y, screen)
         screen.register_shape("./image/speedarrow.gif")
         self.shape("./image/speedarrow.gif")
         self.color("gold")
         self.gold = 100
+
 
 class Destructable(GameObject):
     def __init__(self, x, y, screen):
@@ -109,12 +114,14 @@ class Destructable(GameObject):
         self.shape("./image/pink.gif")
         self.color("pink")
 
+
 class Gun(GameObject):
     def __init__(self, x, y, screen):
         super().__init__(x, y, screen)
         screen.register_shape("./image/laser.gif")
         self.shape("./image/laser.gif")
         self.color("grey")
+
 
 def load_maps():
     """_summary_
@@ -124,6 +131,7 @@ def load_maps():
     """
     with open('./assets/mazes.json') as maze_file:
         return json.load(maze_file)
+
 
 def setup_maze(level: array):
     """_summary_
@@ -158,7 +166,8 @@ def setup_maze(level: array):
             elif character == "G":
                 gun.append(Gun(maze_x, maze_y, turtlescreen))
             elif character == "D":
-                destructibles.append(Destructable(maze_x, maze_y, turtlescreen))
+                destructibles.append(Destructable(
+                    maze_x, maze_y, turtlescreen))
             elif character == "W":
                 doors.append(Door(maze_x, maze_y, turtlescreen))
             elif character == "K":
@@ -171,6 +180,8 @@ def setup_maze(level: array):
     print("Turtles " + str(len(turtlescreen.turtles())))
 
 # we aren't actually doing anything clicky but left in.
+
+
 def on_click(event):
     """_summary_
 
@@ -179,6 +190,7 @@ def on_click(event):
     """
     pos_x, pos_y = event.x, event.y
     print('x={}, y={}'.format(pos_x, pos_y))
+
 
 def gameover():
     """_summary_
@@ -191,6 +203,7 @@ def gameover():
         "GAME OVER", align="left", font=(
             "Courier", 110))
     turtle.goto(2000, 2000)
+
 
 def update_timer():
     print("update timer")
@@ -205,6 +218,7 @@ def start_timer():
     timer_thread = threading.Thread(target=update_timer)
     timer_thread.start()
 
+
 def move_drone(player: Drone, instructions):
     """_summary_
         Read commands and move drone
@@ -216,7 +230,8 @@ def move_drone(player: Drone, instructions):
     for instruction in instructions:
         if gamewon:
             continue
-        if len(instruction) == 0: # quick/dirty check to ignore empty lines. Prevents crash due to players hitting "enter" after last entered command.
+        # quick/dirty check to ignore empty lines. Prevents crash due to players hitting "enter" after last entered command.
+        if len(instruction) == 0:
             continue
         (command, value) = tuple(re.split(' ', instruction.strip()))
         # append whatever command is about to be run into the executing box and MOVE the box to end (scrollable box)
@@ -234,7 +249,7 @@ def move_drone(player: Drone, instructions):
                     return
                 #global speed
                 #speed = player.getSpeed()
-                #time.sleep(speed)
+                # time.sleep(speed)
                 if not player.move():
                     gameover()
                     # could disable button but unnecessary as they don't move if dead.
@@ -252,22 +267,29 @@ def move_drone(player: Drone, instructions):
 
 # take user input and run commands on the map (clear executingtext textbox first)
 # performs check to ensure dead players can't move. Could disable run button instead when dead but...
+
+
 def run():
-    if player.playerDead(): # check they're not just re-running commands without resetting after failing.
+    # check they're not just re-running commands without resetting after failing.
+    if player.playerDead():
         return
-    executingtext.delete('1.0', END) # clear textbox
+    executingtext.delete('1.0', END)  # clear textbox
     # "get" apparently adds newline character to end, so get from start to -1 of end; splitlines splits around newline.
     commands_text = inputtext.get('1.0', 'end-1c').splitlines()
     if validate_command_text(commands_text):
         move_drone(player, commands_text)
 
 # print executing text to end of list
+
+
 def print_executing_text(text):
     executingtext.insert(END, text + '\n')
     executingtext.update()
     executingtext.see("end")
 
 # validate command text. Don't execute commands if not valid.
+
+
 def validate_command_text(commands_text):
     for command_text in commands_text:
         commands = re.split(' ', command_text.strip())
@@ -289,11 +311,14 @@ def validate_command_text(commands_text):
             print_executing_text('Unknown command: ' + command_text)
             return False
     return True
-    
+
 # just clear out text of commands/output
+
+
 def clear():
     inputtext.delete('1.0', END)
     executingtext.delete('1.0', END)
+
 
 def wingame():
     global gamewon
@@ -313,6 +338,8 @@ def wingame():
 # Respawn moves existing turtles back to their original x/y given at creation. Turtles are just moved out of screen when "destroyed"
 # Could therefore create extended class of RawTurtle that keeps x/y original and has these repetitive methods.
 # but for quick hacky omitted for now.
+
+
 def reset():
     # buttonrun["state"] = NORMAL # if you disable button, then this is how to re-enable
     player.reset()
@@ -329,13 +356,16 @@ def reset():
         destructible.respawn()
     global gamewon
     gamewon = False
-    turtle.clear() # this is the "game over" pen being cleared of any writing done.
+    # this is the "game over" pen being cleared of any writing done.
+    turtle.clear()
 
 # Should remove commands entered/ran from Textboxes.
 # It DESTROYS all turtle objects via calling clear on the screen. This means they need recreating.
 # turtlescreen.clear therefore destroys player, treasures, doors, keys, and the wall drawing "pen" turtle.
 # Must therefore create player, the turtle to draw the maze (the creation of maze creates treasures/doors/keys turtle)
 # Therefore has to clear the lists that are passed to the player/drone Turtle prior to creating from map.
+
+
 def startnew():
     # buttonrun["state"] = NORMAL
     clear()
@@ -353,13 +383,15 @@ def startnew():
     global pen
     global player
     pen = Pen(turtlescreen)
-    player = Drone(walls, keys, doors, treasures, destructibles, gun, turtlescreen)
+    player = Drone(walls, keys, doors, treasures,
+                   destructibles, gun, turtlescreen)
     canvas.tag_raise(player)
     # set up maze (also creates treasures turtles)
     setup_maze(maps[random.randrange(len(maps))])
     # Game over message printing, perhaps change this to something else.
     global turtle
-    turtle = RawTurtle(turtlescreen) # as this is the "game over" message pen, associated with the screen, recreate.
+    # as this is the "game over" message pen, associated with the screen, recreate.
+    turtle = RawTurtle(turtlescreen)
     turtle.penup()
     turtle.hideturtle()
     # turn back on the anims (updates).
@@ -368,8 +400,11 @@ def startnew():
     gamewon = False
 
 # Incase of button to exit addition for now? Reality is you can just click X on window this is unnecessary...
+
+
 def exit():
     sys.exit(0)
+
 
 # main command?
 # TODO extract out the load of map to function
@@ -398,11 +433,13 @@ if __name__ == "__main__":
     # create top frame widget
     titlelabel = Label(frametop, text="Maze Game", font=('Arial', 25))
     titlelabel.grid(column=0, row=0)
-    label = Label(frametop, text="Write your commands in text box and click run")
+    label = Label(
+        frametop, text="Write your commands in text box and click run")
     label.grid(column=0, row=1)
 
     # LEGEND -- long winded but...
-    legendlabel = Label(frameright, text="Maze Legend", font=('Arial', 15), height=2)
+    legendlabel = Label(frameright, text="Maze Legend",
+                        font=('Arial', 15), height=2)
     legendlabel.grid(column=0, row=0)
     legend = Canvas(frameright)
     legend.grid(row=1, column=0, sticky='w')
@@ -435,7 +472,8 @@ if __name__ == "__main__":
     legend.create_image(20, 300, image=laserimage, anchor=NW)
     legend.create_text(90, 305, text="Drone Laser (pickup)", anchor=NW)
     legend.create_image(20, 340, image=destructibleimage, anchor=NW)
-    legend.create_text(90, 345, text="Destructible Wall (need laser)", anchor=NW)
+    legend.create_text(
+        90, 345, text="Destructible Wall (need laser)", anchor=NW)
 
     # GAME CANVAS
     canvas = Canvas(root)
@@ -443,7 +481,8 @@ if __name__ == "__main__":
     canvas.config(width=900, height=700)
 
     # LEFT FRAME (Commands box + buttons)
-    commandslabel = Label(frameleft, text="Commands Entry List", font=('Arial', 15))
+    commandslabel = Label(
+        frameleft, text="Commands Entry List", font=('Arial', 15))
     commandslabel.grid(column=0, row=0, sticky="new")
     inputtext = Text(frameleft, height=30, width=40)
     inputtext.grid(row=1, column=0)
@@ -455,11 +494,13 @@ if __name__ == "__main__":
     buttonreset.grid(row=4, column=0, sticky='esw')
     buttonnewgame = Button(frameleft, text='New Game', command=startnew)
     buttonnewgame.grid(row=5, column=0, sticky='esw')
-    timerlabel = Label(frameleft, text="Timer 00:00:00", font=('Arial', 15), height=2)
+    timerlabel = Label(frameleft, text="Timer 00:00:00",
+                       font=('Arial', 15), height=2)
     timerlabel.grid(row=8, column=0, sticky='esw')
 
     # BOTTOM FRAME (scrollable executing command window) -- simply indicates last command incase of errors.
-    executingtext = scrolledtext.ScrolledText(framebottom, height=10, width=112, wrap=WORD)
+    executingtext = scrolledtext.ScrolledText(
+        framebottom, height=10, width=112, wrap=WORD)
     executingtext.grid(row=0, column=0, sticky='news')
 
     # Game canvas screen setup.
@@ -472,8 +513,8 @@ if __name__ == "__main__":
 
     # Play that funky music ...
     pygame.mixer.init()
-    #pygame.mixer.music.load("./Music/SoundTest.wav")
-    #pygame.mixer.music.play(-1)
+    # pygame.mixer.music.load("./Music/SoundTest.wav")
+    # pygame.mixer.music.play(-1)
 
     # globals -- this is from tutorial, with refactor it'd be better...
     gameexit = []
