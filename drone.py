@@ -8,7 +8,6 @@ STEP_COUNT = 24
 # Not a fan of Drone (player) knowing locations of everything in maze and
 # deciding himself what happens; seems backwards.
 
-
 class Drone(RawTurtle):
     """
     Moves the drone object
@@ -90,18 +89,18 @@ class Drone(RawTurtle):
         # and then act on type?
         # pick up laser.
         for gun in self.guns:
-            if (gun.getX() == pos_x and gun.getY() == pos_y and gun.isActive()):
+            if (gun.get_x() == pos_x and gun.get_y() == pos_y and gun.isActive()):
                 self.haslaser = True
                 gun.destroy()
 
         # ran into destructible wall?
         for destructible in self.destructibles:
-            if (destructible.getX() == pos_x and destructible.getY()
+            if (destructible.get_x() == pos_x and destructible.get_y()
                     == pos_y and destructible.isActive()):
                 return False
 
         for treasure in self.treasures:
-            if (treasure.getX() == pos_x and treasure.getY()
+            if (treasure.get_x() == pos_x and treasure.get_y()
                     == pos_y and treasure.isActive()):
                 treasure.destroy()
                 # 20s at 0.5 delay, 40 moves basically... and turns are a move
@@ -112,18 +111,18 @@ class Drone(RawTurtle):
                 self.delay = 0.5
 
         for key in self.keyset:
-            if (key.getX() == pos_x and key.getY() == pos_y and key.isActive()):
-                print("Key coords " + str(key.getX()) + " " + str(key.getY()))
+            if (key.get_x() == pos_x and key.get_y() == pos_y and key.isActive()):
+                print("Key coords " + str(key.get_x()) + " " + str(key.get_y()))
                 self.keys += 1
                 key.destroy()
 
         for door in self.doors:
-            if (door.getX() == pos_x and door.getY()
+            if (door.get_x() == pos_x and door.get_y()
                     == pos_y and door.isActive()):
                 # could check door locked or not and set open etc instead of
                 # destroying door, where destroy for door overrides and changes
                 # icon?
-                print("Door coords " + str(door.getX()) + " " + str(door.getY()))
+                print("Door coords " + str(door.get_x()) + " " + str(door.get_y()))
                 if self.keys == 0:
                     print('No keys, locked door')
                     return False  # locked door no key
@@ -191,8 +190,8 @@ class Drone(RawTurtle):
             blockx -= 24
 
         for destructible in self.destructibles:
-            if (blockx == destructible.getX() and blocky ==
-                    destructible.getY() and destructible.isActive()):
+            if (blockx == destructible.get_x() and blocky ==
+                    destructible.get_y() and destructible.isActive()):
                 destructible.destroy()
 
     def turn(self, turn_direction):

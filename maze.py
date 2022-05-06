@@ -1,17 +1,17 @@
-from concurrent.futures.process import _threads_wakeups
+"""Maze module."""
 from turtle import RawTurtle, TurtleScreen
-from tkinter import *
+#from tkinter import *
 from tkinter import scrolledtext
 import sys
 import time
-import pygame
-import random
-import json
-from numpy import array
+import threading
 import re
+import json
+import random
+import pygame
+from numpy import array
 from drone import Drone
 import messages
-import threading
 
 
 class Pen(RawTurtle):
@@ -34,13 +34,13 @@ class Pen(RawTurtle):
 
 
 class GameObject(RawTurtle):
-    def __init__(self, x, y, screen):
+    def __init__(self, pos_x, pos_y, screen):
         super().__init__(screen)
         self.penup()
         self.speed(0)
-        self.goto(x, y)
-        self.x = x
-        self.y = y
+        self.goto(pos_x, pos_y)
+        self.x = pos_x
+        self.y = pos_y
         self.active = True
 
     def destroy(self):
@@ -54,10 +54,10 @@ class GameObject(RawTurtle):
         self.active = True
         self.showturtle()
 
-    def getX(self):
+    def get_x(self):
         return self.x
 
-    def getY(self):
+    def get_y(self):
         return self.y
 
     def isActive(self):
@@ -160,8 +160,8 @@ def setup_maze(level: array):
                 player_pos.append(maze_y)
                 player.showturtle()
             elif character == "A":
-                global gameexit
-                gameexit = [maze_x, maze_y]
+                global GAMEEXIT
+                GAMEEXIT = [maze_x, maze_y]
             elif character == "T":
                 treasures.append(Treasure(maze_x, maze_y, turtlescreen))
             elif character == "G":
@@ -184,13 +184,14 @@ def setup_maze(level: array):
 
 
 def on_click(event):
-    """_summary_
+    """
+    Event click
 
     Args:
         event (_type_): _description_
     """
     pos_x, pos_y = event.x, event.y
-    print('x={}, y={}'.format(pos_x, pos_y))
+    print(f'x={pos_x}, y={pos_y}')
 
 
 def gameover():
@@ -229,7 +230,7 @@ def move_drone(player: Drone, instructions):
     start_timer()
 
     for instruction in instructions:
-        if gamewon:
+        if GAMEWON:
             continue
         # quick/dirty check to ignore empty lines. Prevents crash due to
         # players hitting "enter" after last entered command.
@@ -247,8 +248,8 @@ def move_drone(player: Drone, instructions):
             player.turn(value)
         elif command.upper() == 'MOVE':
             for _ in range(0, int(value)):
-                if player.xcor() == gameexit[0] and player.ycor(
-                ) == gameexit[1]:
+                if player.xcor() == GAMEEXIT[0] and player.ycor(
+                ) == GAMEEXIT[1]:
                     wingame()
                     return
                 #global speed
@@ -327,8 +328,8 @@ def clear():
 
 
 def wingame():
-    global gamewon
-    gamewon = True
+    global GAMEWON
+    GAMEWON = True
     # stop timer
     turtle.penup()
     turtle.goto(-350, -100)
@@ -361,8 +362,8 @@ def reset():
         laser.respawn()
     for destructible in destructibles:
         destructible.respawn()
-    global gamewon
-    gamewon = False
+    global GAMEWON
+    GAMEWON = False
     # this is the "game over" pen being cleared of any writing done.
     turtle.clear()
 
@@ -406,8 +407,8 @@ def startnew():
     turtle.hideturtle()
     # turn back on the anims (updates).
     turtlescreen.tracer(1)
-    global gamewon
-    gamewon = False
+    global GAMEWON
+    GAMEWON = False
 
 # Incase of button to exit addition for now? Reality is you can just click
 # X on window this is unnecessary...
@@ -529,7 +530,7 @@ if __name__ == "__main__":
     # pygame.mixer.music.play(-1)
 
     # globals -- this is from tutorial, with refactor it'd be better...
-    gameexit = []
+    GAMEEXIT = []
     walls = []
     treasures = []
     doors = []
@@ -540,7 +541,7 @@ if __name__ == "__main__":
     # position.
     player_pos = []
     speed = 1
-    gamewon = False
+    GAMEWON = False
     # load maps (global)
     maps = load_maps()
     # do the map setup.
