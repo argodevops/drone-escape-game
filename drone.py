@@ -1,13 +1,12 @@
-
+"""Drone module."""
 import time
-import turtle
 from turtle import RawTurtle
 import math
-from numpy import array
 
 STEP_COUNT = 24
 
-# Not a fan of Drone (player) knowing locations of everything in maze and deciding himself what happens; seems backwards.
+# Not a fan of Drone (player) knowing locations of everything in maze and
+# deciding himself what happens; seems backwards.
 
 class Drone(RawTurtle):
     """
@@ -17,7 +16,16 @@ class Drone(RawTurtle):
         turtle (_type_): turtle object
     """
     # following convention but this is not ideal. Just making it work.
-    def __init__(self, walls, keyset, doors, treasures, destructibles, guns, screen):
+
+    def __init__(
+            self,
+            walls,
+            keyset,
+            doors,
+            treasures,
+            destructibles,
+            guns,
+            screen):
         RawTurtle.__init__(self, screen)
         screen.register_shape("./image/drone.gif")
         self.reset()
@@ -25,7 +33,8 @@ class Drone(RawTurtle):
         self.hideturtle()
         self.isdead = False
         self.direction = 'UP'
-        # so player knows walls rather than game decides, so will need to know other things.
+        # so player knows walls rather than game decides, so will need to know
+        # other things.
         self.keys = 0
         self.gold = 0
         self.keyset = keyset
@@ -37,6 +46,9 @@ class Drone(RawTurtle):
         self.haslaser = False
 
     def reset(self):
+        """
+        Resets everything
+        """
         self.shape("./image/drone.gif")
         self.color("blue")
         self.penup()
@@ -48,15 +60,28 @@ class Drone(RawTurtle):
         self.haslaser = False
 
     def processgold(self):
+        """
+        Gold speed up
+        """
         if self.gold > 0:
             self.gold -= 1
         if self.gold <= 0:
             self.delay = 1
 
-    def processmove(self, x, y):
+    def processmove(self, pos_x, pos_y):
+        """
+        Process move coords
+
+        Args:
+            x (_type_): _description_
+            y (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         self.processgold()
         # did we collide with a wall?
-        if (x, y) in self.walls:
+        if (pos_x, pos_y) in self.walls:
             return False
         time.sleep(self.delay)
         # this is going to be messy... but make it work first and foremost, refactor later.
@@ -64,41 +89,49 @@ class Drone(RawTurtle):
         # and then act on type?
         # pick up laser.
         for gun in self.guns:
-            if (gun.getX() == x and gun.getY() == y and gun.isActive()):
+            if (gun.get_x() == pos_x and gun.get_y() == pos_y and gun.is_active()):
                 self.haslaser = True
                 gun.destroy()
 
-        #ran into destructible wall?
+        # ran into destructible wall?
         for destructible in self.destructibles:
-            if (destructible.getX() == x and destructible.getY() == y and destructible.isActive()):
+            if (destructible.get_x() == pos_x and destructible.get_y()
+                    == pos_y and destructible.is_active()):
                 return False
 
         for treasure in self.treasures:
-            if (treasure.getX() == x and treasure.getY() == y and treasure.isActive()):
+            if (treasure.get_x() == pos_x and treasure.get_y()
+                    == pos_y and treasure.is_active()):
                 treasure.destroy()
-                self.gold += 40 # 20s at 0.5 delay, 40 moves basically... and turns are a move too.
-                # depending on map it may take longer to collect and return gold than to ignore it.
+                # 20s at 0.5 delay, 40 moves basically... and turns are a move
+                # too.
+                self.gold += 40
+                # depending on map it may take longer to collect and return
+                # gold than to ignore it.
                 self.delay = 0.5
 
         for key in self.keyset:
-            if (key.getX() == x and key.getY() == y and key.isActive()):
-                print("Key coords " + str(key.getX()) + " " + str(key.getY()))
+            if (key.get_x() == pos_x and key.get_y() == pos_y and key.is_active()):
+                print("Key coords " + str(key.get_x()) + " " + str(key.get_y()))
                 self.keys += 1
                 key.destroy()
 
         for door in self.doors:
-            if (door.getX() == x and door.getY() == y and door.isActive()):
-                 # could check door locked or not and set open etc instead of destroying door, where destroy for door overrides and changes icon?
-                print("Door coords " + str(door.getX()) + " " + str(door.getY()))
+            if (door.get_x() == pos_x and door.get_y()
+                    == pos_y and door.is_active()):
+                # could check door locked or not and set open etc instead of
+                # destroying door, where destroy for door overrides and changes
+                # icon?
+                print("Door coords " + str(door.get_x()) + " " + str(door.get_y()))
                 if self.keys == 0:
                     print('No keys, locked door')
-                    return False # locked door no key
-                else:
-                    print("Have" + str(self.keys) + " available, using one")
-                    self.keys -= 1
-                    door.destroy()
+                    return False  # locked door no key
+
+                print("Have" + str(self.keys) + " available, using one")
+                self.keys -= 1
+                door.destroy()
         # continue on!
-        self.goto(x,y)
+        self.goto(pos_x, pos_y)
         return True
 
     def go_up(self, count=1):
@@ -140,6 +173,9 @@ class Drone(RawTurtle):
         return self.processmove(move_to_x, move_to_y)
 
     def shoot(self):
+        """
+        Shoots block
+        """
         if not self.haslaser:
             return
         blockx = self.xcor()
@@ -154,18 +190,19 @@ class Drone(RawTurtle):
             blockx -= 24
 
         for destructible in self.destructibles:
-            if (blockx == destructible.getX() and blocky == destructible.getY() and destructible.isActive()):
+            if (blockx == destructible.get_x() and blocky ==
+                    destructible.get_y() and destructible.is_active()):
                 destructible.destroy()
 
     def turn(self, turn_direction):
-        self.processgold()
         """_summary_
 
         Args:
             turn_direction (_type_): _description_
         """
+        self.processgold()
+        turn_direction = turn_direction.upper()
         print(f" * TURN {turn_direction}")
-        # IDEA - could make directions reverse to make it trickier??
         if turn_direction == "RIGHT":
             if self.direction == "UP":
                 self.direction = "RIGHT"
@@ -188,6 +225,8 @@ class Drone(RawTurtle):
             print(f"Unknown turn direction {turn_direction}")
 
     def dead(self):
+        """_summary_
+        """
         screen = self.getscreen()
         screen.register_shape("./image/zombie.gif")
         self.shape("./image/zombie.gif")
@@ -195,7 +234,12 @@ class Drone(RawTurtle):
         self.gold = 0
         self.delay = 1
 
-    def playerDead(self):
+    def player_dead(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
         return self.isdead
 
     def move(self, steps=1):
@@ -219,7 +263,7 @@ class Drone(RawTurtle):
 
         if not moved:
             self.dead()
-        #wn.update()
+        # wn.update()
 
         return moved
 
