@@ -476,7 +476,7 @@ if __name__ == "__main__":
     frameright.grid(column=2, row=1, sticky='n')
 
     # create top frame widget
-    titlelabel = Label(frametop, text="Maze Game", font=('Arial', 25))
+    titlelabel = Label(frametop, text="Drone Escape", font=('Arial', 25))
     titlelabel.grid(column=0, row=0)
     label = Label(
         frametop, text="Write your commands in text box and click run")
