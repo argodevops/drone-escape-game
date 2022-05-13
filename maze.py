@@ -520,9 +520,12 @@ if __name__ == "__main__":
     legend.create_text(
         90, 345, text="Destructible Wall (need laser)", anchor=NW)
    
-#############MATT'S EDIT##############
-    legend.create_text(80, 450, text="Controlling the Drone", anchor=NW, font=('Arial', '12', 'bold'))
-
+#Insturctions for the player to type commands are as follows:
+    legend.create_text(110, 450, text="Commands", anchor=NW, font=('Arial', '14'))
+    legend.create_text(0, 490, text="To Move in the direction you are facing,\nuse 'MOVE 'x' where 'x' is the number \nof spaces to move", anchor=NW, font=('Arial', '12')) 
+    legend.create_text(0, 560, text="To Turn Left, use 'LEFT'", anchor=NW, font=('Arial', '12'))
+    legend.create_text(0, 590, text="To Turn Right, use 'RIGHT'", anchor=NW, font=('Arial', '12'))
+    legend.create_text(0, 620, text="To Fire the Laser, use 'FIRE'", anchor=NW, font=('Arial', '12'))
 
     # GAME CANVAS
     canvas = Canvas(root)
