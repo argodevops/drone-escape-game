@@ -6,10 +6,14 @@ A maze game built using `tkinter` and `turtle` which takes a set of commands to 
 1. Create your virtual environment: `python3 -m venv .venv`
 2. Activate the virtual environment: `source ./.venv/bin/activate`
 3. Install the dependencies: `pip install -r requirements.txt`
+4. Install python-tk: `sudo apt-get install python-tk`
 
 ## Running the game
 
-Run ```python3 maze.py```
+Run:
+
+`source ./.venv/bin/activate`
+`python maze.py`
 
 ## Game Instructions
 
@@ -32,4 +36,4 @@ CHRIS
 
 MIKE
 * Shoot command
-* Resize for 21" screen (portrait) assuming 16:9 ratio
+* Resize for 21" screen (lanscape) assuming 16:9 ratio
