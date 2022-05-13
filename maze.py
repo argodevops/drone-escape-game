@@ -476,7 +476,7 @@ if __name__ == "__main__":
     frameright.grid(column=2, row=1, sticky='n')
 
     # create top frame widget
-    titlelabel = Label(frametop, text="Drone Escape", font=('Arial', 25))
+    titlelabel = Label(frametop, text="Drone Escape", font=('Arial', 25, 'bold'))
     titlelabel.grid(column=0, row=0)
     label = Label(
         frametop, text="Write your commands in text box and click run")
@@ -519,6 +519,10 @@ if __name__ == "__main__":
     legend.create_image(20, 340, image=destructibleimage, anchor=NW)
     legend.create_text(
         90, 345, text="Destructible Wall (need laser)", anchor=NW)
+   
+#############MATT'S EDIT##############
+    legend.create_text(80, 450, text="Controlling the Drone", anchor=NW, font=('Arial', '12', 'bold'))
+
 
     # GAME CANVAS
     canvas = Canvas(root)
