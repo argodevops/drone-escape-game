@@ -371,6 +371,7 @@ def reset():
     # buttonrun["state"] = NORMAL # if you disable button, then this is how to
     # re-enable
     player.reset()
+    stop_timer(True)
     player.goto(player_pos[0], player_pos[1])
     for treasure in treasures:
         treasure.respawn()
@@ -386,7 +387,6 @@ def reset():
     GAMEWON = False
     # this is the "game over" pen being cleared of any writing done.
     turtle.clear()
-    stop_timer(True)
 
 # Should remove commands entered/ran from Textboxes.
 # It DESTROYS all turtle objects via calling clear on the screen. This means they need recreating.
