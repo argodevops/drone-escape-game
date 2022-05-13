@@ -32,4 +32,4 @@ CHRIS
 
 MIKE
 * Shoot command
-* Resize for 21" screen (portrait) assuming 4:3 ratio
+* Resize for 21" screen (portrait) assuming 16:9 ratio
