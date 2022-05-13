@@ -269,23 +269,20 @@ def move_drone(player: Drone, instructions):
         # players hitting "enter" after last entered command.
         if len(instruction) == 0:
             continue
-        (command, value) = tuple(re.split(' ', instruction.strip()))
+        commands = tuple(re.split(' ', instruction.strip()))
         # append whatever command is about to be run into the executing box and
         # MOVE the box to end (scrollable box)
         print_executing_text(instruction)
-        if command.upper() == 'FIRE':
+        if commands[0].upper() == 'FIRE':
             player.shoot()
-        elif command.upper() == 'TURN':
-            player.turn(value)
-        elif command.upper() == 'MOVE':
-            for _ in range(0, int(value)):
+        elif commands[0].upper() == 'TURN':
+            player.turn(commands[1])
+        elif commands[0].upper() == 'MOVE':
+            for _ in range(0, int(commands[1])):
                 if player.xcor() == GAMEEXIT[0] and player.ycor(
                 ) == GAMEEXIT[1]:
                     wingame()
                     return
-                #global speed
-                #speed = player.getSpeed()
-                # time.sleep(speed)
                 if not player.move():
                     gameover()
                     # could disable button but unnecessary as they don't move if dead.
@@ -337,9 +334,6 @@ def clear_executing_text():
 def validate_command_text(commands_text):
     for command_text in commands_text:
         commands = re.split(' ', command_text.strip())
-        if len(commands) != 2:
-            print_executing_text('Unknown command: ' + command_text)
-            return False
         command = commands[0].upper()
         if command == 'MOVE':
             if not commands[1].isnumeric():
@@ -350,7 +344,9 @@ def validate_command_text(commands_text):
                 print_executing_text('Invalid command: ' + command_text)
                 return False
         elif command == 'FIRE':
-            pass
+            if len(commands) > 1:
+                print_executing_text('Invalid Fire Paramteter: ' + command_text)
+                return False
         else:
             print_executing_text('Unknown command: ' + command_text)
             return False
