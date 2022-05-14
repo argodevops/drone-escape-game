@@ -260,33 +260,27 @@ def move_drone(player: Drone, instructions):
         # players hitting "enter" after last entered command.
         if len(instruction) == 0:
             continue
-        (command, value) = tuple(re.split(' ', instruction.strip()))
+        commands = tuple(re.split(' ', instruction.strip()))
         # append whatever command is about to be run into the executing box and
         # MOVE the box to end (scrollable box)
-        executingtext.insert(END, instruction + '\n')
-        executingtext.update()
-        executingtext.see("end")
-        if command.upper() == 'SHOOT':
+        print_executing_text(instruction)
+        if commands[0].upper() == 'FIRE':
             player.shoot()
-        elif command.upper() == 'TURN':
-            player.turn(value)
-        elif command.upper() == 'MOVE':
-            for _ in range(0, int(value)):
+        elif commands[0].upper() == 'TURN':
+            player.turn(commands[1])
+        elif commands[0].upper() == 'MOVE':
+            for _ in range(0, int(commands[1])):
                 if player.xcor() == GAMEEXIT[0] and player.ycor(
                 ) == GAMEEXIT[1]:
                     wingame()
                     return
-                #global speed
-                #speed = player.getSpeed()
-                # time.sleep(speed)
                 if not player.move():
                     gameover()
                     # could disable button but unnecessary as they don't move if dead.
                     # buttonrun["state"] = DISABLED
                     return False
         else:
-            executingtext.insert(END, 'Unknown command ' + instruction)
-            executingtext.see("end")
+            print_executing_text('Unknown command: ' + instruction)
             # could disable run button or highlight text red etc?
             player.dead()
             gameover()
@@ -303,7 +297,7 @@ def run():
     # check they're not just re-running commands without resetting after failing.
     if player.player_dead():
         return
-    executingtext.delete('1.0', END)  # clear textbox
+    clear_executing_text() # clear textbox
     # "get" apparently adds newline character to end, so get from start to -1 of end; splitlines splits around newline.
     commands_text = inputtext.get('1.0', 'end-1c').splitlines()
     if validate_command_text(commands_text):
@@ -312,17 +306,21 @@ def run():
 
 # print executing text to end of list
 def print_executing_text(text):
+    executingtext.configure(state='normal')
     executingtext.insert(END, text + '\n')
     executingtext.update()
     executingtext.see("end")
+    executingtext.configure(state='disabled')
+
+def clear_executing_text():
+    executingtext.configure(state='normal')
+    executingtext.delete('1.0', END)
+    executingtext.configure(state='disabled')
 
 # validate command text. Don't execute commands if not valid.
 def validate_command_text(commands_text):
     for command_text in commands_text:
         commands = re.split(' ', command_text.strip())
-        if len(commands) != 2:
-            print_executing_text('Unknown command: ' + command_text)
-            return False
         command = commands[0].upper()
         if command == 'MOVE':
             if not commands[1].isnumeric():
@@ -332,8 +330,10 @@ def validate_command_text(commands_text):
             if commands[1].upper() not in ['RIGHT', 'LEFT']:
                 print_executing_text('Invalid command: ' + command_text)
                 return False
-        elif command == 'SHOOT':
-            pass
+        elif command == 'FIRE':
+            if len(commands) > 1:
+                print_executing_text('Invalid Fire Paramteter: ' + command_text)
+                return False
         else:
             print_executing_text('Unknown command: ' + command_text)
             return False
@@ -344,7 +344,7 @@ def validate_command_text(commands_text):
 
 def clear():
     inputtext.delete('1.0', END)
-    executingtext.delete('1.0', END)
+    clear_executing_text()
 
 
 def wingame():
@@ -533,7 +533,7 @@ if __name__ == "__main__":
 
     # BOTTOM FRAME (scrollable executing command window) -- simply indicates
     # last command incase of errors.
-    executingtext = scrolledtext.ScrolledText(framebottom, height=10, width=112, wrap=WORD)
+    executingtext = scrolledtext.ScrolledText(framebottom, height=10, width=112, wrap=WORD, state='disabled')
     executingtext.grid(row=0, column=0, sticky='news')
 
     # Game canvas screen setup.
