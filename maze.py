@@ -1,14 +1,11 @@
 """Maze module."""
-from turtle import RawTurtle, TurtleScreen
+from turtle import RawTurtle, TurtleScreen, color
 from tkinter import *
 from tkinter import scrolledtext
-import sys
-import time
 import threading
 import re
 import json
 import random
-import pygame
 from numpy import array
 from drone import Drone
 from timer import Timer
@@ -98,7 +95,7 @@ class GameObject(RawTurtle):
         return self.active
 
 
-# could have destroyable blocks that the users can destroy with a drones gun?but that may be a bit... aggressive. But it'd
+# could have destroyable blocks that the users can destroy with a drones lazer?but that may be a bit... aggressive. But it'd
 # give even more interesting possibilities.
 class DoorKey(GameObject):
     def __init__(self, x, y, screen):
@@ -149,7 +146,7 @@ class Destructable(GameObject):
         self.color("pink")
 
 
-class Gun(GameObject):
+class Lazer(GameObject):
     def __init__(self, x, y, screen):
         super().__init__(x, y, screen)
         screen.register_shape("./image/laser.gif")
@@ -199,17 +196,15 @@ def setup_maze(level: array):
             elif character == "T":
                 treasures.append(Treasure(maze_x, maze_y, turtlescreen))
             elif character == "G":
-                gun.append(Gun(maze_x, maze_y, turtlescreen))
+                lazers.append(Lazer(maze_x, maze_y, turtlescreen))
             elif character == "D":
-                destructibles.append(Destructable(
-                    maze_x, maze_y, turtlescreen))
+                destructibles.append(Destructable(maze_x, maze_y, turtlescreen))
             elif character == "W":
                 doors.append(Door(maze_x, maze_y, turtlescreen))
             elif character == "K":
                 keys.append(DoorKey(maze_x, maze_y, turtlescreen))
-            elif character == "G":
-                # Now graphic or turtle here? Nor letting player know...
-                print(f"Goal defined at {pos_x}, {pos_y}")
+            else:
+                print(f"Unknown character {character}")
     turtlescreen.update()
     # was a debug to check we had correctly destroyed/created turtles.
     print("Turtles " + str(len(turtlescreen.turtles())))
@@ -224,9 +219,7 @@ def gameover():
     turtle.penup()
     turtle.goto(-400, -100)
     turtle.color("red")
-    turtle.write(
-        "GAME OVER", align="left", font=(
-            "Courier", 110))
+    turtle.write("GAME OVER", align="left", font=("Courier", 110))
     turtle.goto(2000, 2000)
 
 
@@ -276,12 +269,9 @@ def move_drone(player: Drone, instructions):
                     return
                 if not player.move():
                     gameover()
-                    # could disable button but unnecessary as they don't move if dead.
-                    # buttonrun["state"] = DISABLED
                     return False
         else:
             print_executing_text('Unknown command: ' + instruction)
-            # could disable run button or highlight text red etc?
             player.dead()
             gameover()
             return False
@@ -354,9 +344,7 @@ def wingame():
     turtle.penup()
     turtle.goto(-350, -100)
     turtle.color("green")
-    turtle.write(
-        "YOU WIN!", align="left", font=(
-            "Courier", 110))
+    turtle.write("YOU WIN!", align="left", font=("Courier", 110))
     turtle.goto(2000, 2000)
     messages.win()
 
@@ -379,8 +367,8 @@ def reset():
         key.respawn()
     for door in doors:
         door.respawn()
-    for laser in gun:
-        laser.respawn()
+    for lazer in lazers:
+        lazer.respawn()
     for destructible in destructibles:
         destructible.respawn()
     global GAMEWON
@@ -397,7 +385,6 @@ def reset():
 
 
 def startnew():
-    # buttonrun["state"] = NORMAL
     clear()
     # clear DELETES all turtles... this includes player/pen turtles.
     turtlescreen.clear()
@@ -408,14 +395,14 @@ def startnew():
     walls.clear()
     treasures.clear()
     destructibles.clear()
-    gun.clear()
+    lazers.clear()
     # we need to refer to global pen/player lest fan and x attempt merge, and
     # so create new turtles
     global pen
     global player
     pen = Pen(turtlescreen)
     player = Drone(walls, keys, doors, treasures,
-                   destructibles, gun, turtlescreen)
+                   destructibles, lazers, turtlescreen)
     canvas.tag_raise(player)
     # set up maze (also creates treasures turtles)
     setup_maze(maps[random.randrange(len(maps))])
@@ -432,20 +419,13 @@ def startnew():
     GAMEWON = False
     stop_timer(True)
 
-# Incase of button to exit addition for now? Reality is you can just click
-# X on window this is unnecessary...
-
-
-# def exit():
-#     sys.exit(0)
-
 
 # main command?
 # TODO extract out the load of map to function
 if __name__ == "__main__":
     # set up properties
     root = Tk()
-    root.title("Game")
+    root.title("Drone Escape Game")
     root.geometry('1650x950')
     # weights supposed to proportion available real-estate appropriately.
     root.grid_columnconfigure(0, weight=2)
@@ -465,14 +445,14 @@ if __name__ == "__main__":
     frameright.grid(column=2, row=1, sticky='n')
 
     # create top frame widget
-    titlelabel = Label(frametop, text="Drone Escape", font=('Arial', 30))
+    # nasty padding as i can't find how to right align the timer
+    titlelabel = Label(frametop, text="DRONE ESCAPE", font=('Arial', 26), height=2, fg='blue', padx=230)
     titlelabel.grid(column=0, row=0)
-    # label = Label(frametop, text="Write your commands in text box and click run")
-    # label.grid(column=0, row=1)
-
+    timerlabel = Label(frametop, text="00:00:00", font=('Arial', 18), height=2)
+    timerlabel.grid(column=1, row=0)
+    
     # LEGEND -- long winded but...
-    legendlabel = Label(frameright, text="Maze Legend",
-                        font=('Arial', 15), height=2)
+    legendlabel = Label(frameright, text="Maze Legend", font=('Arial', 15), height=2)
     legendlabel.grid(column=0, row=0)
     legend = Canvas(frameright)
     legend.grid(row=1, column=0, sticky='w')
@@ -503,10 +483,9 @@ if __name__ == "__main__":
     legend.create_image(20, 260, image=deaddrone, anchor=NW)
     legend.create_text(90, 265, text="Crashed Drone", anchor=NW)
     legend.create_image(20, 300, image=laserimage, anchor=NW)
-    legend.create_text(90, 305, text="Drone Laser (pickup)", anchor=NW)
+    legend.create_text(90, 305, text="Drone Lazer (pickup)", anchor=NW)
     legend.create_image(20, 340, image=destructibleimage, anchor=NW)
-    legend.create_text(
-        90, 345, text="Destructible Wall (need laser)", anchor=NW)
+    legend.create_text(90, 345, text="Destructible Wall (need lazer)", anchor=NW)
 
     # GAME CANVAS
     canvas = Canvas(root)
@@ -528,8 +507,6 @@ if __name__ == "__main__":
     buttonreset.grid(row=5, column=0, sticky='esw')
     buttonnewgame = Button(frameleft, text='New Game', command=startnew)
     buttonnewgame.grid(row=6, column=0, sticky='esw')
-    timerlabel = Label(frameleft, text="00:00:00", font=('Arial', 15), height=2)
-    timerlabel.grid(row=7, column=0, sticky='esw')
 
     # BOTTOM FRAME (scrollable executing command window) -- simply indicates
     # last command incase of errors.
@@ -556,9 +533,8 @@ if __name__ == "__main__":
     doors = []
     keys = []
     destructibles = []
-    gun = []
-    # player position as [x,y] pair in list; global so we can reset player
-    # position.
+    lazers = []
+    # player position as [x,y] pair in list; global so we can reset player position.
     player_pos = []
     speed = 1
     GAMEWON = False
