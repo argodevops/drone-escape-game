@@ -194,6 +194,7 @@ def setup_maze(level: array):
             elif character == "A":
                 global GAMEEXIT
                 GAMEEXIT = [maze_x, maze_y]
+                print(GAMEEXIT)
             elif character == "T":
                 treasures.append(Treasure(maze_x, maze_y, turtlescreen))
             elif character == "G":
@@ -215,12 +216,12 @@ def gameover():
     """
     buttonrun["state"] = NORMAL
     stop_timer()
+    turtlescreen.bgcolor("tomato")
     turtle.penup()
     turtle.goto(-400, -100)
-    turtle.color("red")
+    turtle.color("navy")
     turtle.write("GAME OVER", align="left", font=("Courier", 110))
     turtle.goto(2000, 2000)
-
 
 def start_timer():
     buttonrun["state"] = DISABLED
@@ -262,8 +263,9 @@ def move_drone(player: Drone, instructions):
             player.turn(commands[1])
         elif commands[0].upper() == 'MOVE':
             for _ in range(0, int(commands[1])):
-                if player.xcor() == GAMEEXIT[0] and player.ycor(
-                ) == GAMEEXIT[1]:
+                print(player.xcor())
+                print(player.ycor())
+                if player.xcor() == GAMEEXIT[0] and player.ycor() == GAMEEXIT[1]:
                     wingame()
                     return
                 if not player.move():
@@ -347,7 +349,7 @@ def clear(prompt=True):
 def wingame():
     global GAMEWON
     GAMEWON = True
-    # stop timer
+    stop_timer()
     turtle.penup()
     turtle.goto(-350, -100)
     turtle.color("green")
@@ -365,6 +367,8 @@ def wingame():
 def reset():
     player.reset()
     stop_timer(True)
+    turtle.clear()
+    turtlescreen.bgcolor("cyan")
     player.goto(player_pos[0], player_pos[1])
     for treasure in treasures:
         treasure.respawn()
@@ -379,18 +383,20 @@ def reset():
     global GAMEWON
     GAMEWON = False
     # this is the "game over" pen being cleared of any writing done.
-    turtle.clear()
 
-# Should remove commands entered/ran from Textboxes.
-# It DESTROYS all turtle objects via calling clear on the screen. This means they need recreating.
-# turtlescreen.clear therefore destroys player, treasures, doors, keys, and the wall drawing "pen" turtle.
-# Must therefore create player, the turtle to draw the maze (the creation of maze creates treasures/doors/keys turtle)
-# Therefore has to clear the lists that are passed to the player/drone
-# Turtle prior to creating from map.
+def startnew(prompt = True):
+    """
+    Should remove commands entered/ran from Textboxes.
+    It DESTROYS all turtle objects via calling clear on the screen. This means they need recreating.
+    turtlescreen.clear therefore destroys player, treasures, doors, keys, and the wall drawing "pen" turtle.
+    Must therefore create player, the turtle to draw the maze (the creation of maze creates treasures/doors/keys turtle)
+    Therefore has to clear the lists that are passed to the player/drone
+    Turtle prior to creating from map.
 
-
-def startnew():
-    clear(False)
+    Args:
+        prompt (bool, optional): _description_. Defaults to False.
+    """
+    clear(prompt)
     # clear DELETES all turtles... this includes player/pen turtles.
     turtlescreen.clear()
     turtlescreen.bgcolor("cyan")
@@ -449,7 +455,7 @@ if __name__ == "__main__":
 
     # create top frame widget
     # nasty padding as i can't find how to right align the timer
-    titlelabel = Label(frametop, text="DRONE ESCAPE", font=('Arial', 26), height=2, fg='blue', padx=230)
+    titlelabel = Label(frametop, text="DRONE ESCAPE", font=('Arial', 26), height=2, fg='navy', padx=230)
     titlelabel.grid(column=0, row=0)
     timerlabel = Label(frametop, text="00:00:00", font=('Arial', 18), height=2)
     timerlabel.grid(column=1, row=0)
@@ -544,7 +550,7 @@ if __name__ == "__main__":
     # load maps (global)
     maps = load_maps()
     # do the map setup.
-    startnew()
+    startnew(False)
     gold_left = 3
     turtlescreen.update()
     root.mainloop()
