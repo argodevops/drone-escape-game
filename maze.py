@@ -2,6 +2,7 @@
 from turtle import RawTurtle, TurtleScreen, color
 from tkinter import *
 from tkinter import scrolledtext
+from tkinter.messagebox import askyesno
 import threading
 import re
 import json
@@ -203,8 +204,6 @@ def setup_maze(level: array):
                 doors.append(Door(maze_x, maze_y, turtlescreen))
             elif character == "K":
                 keys.append(DoorKey(maze_x, maze_y, turtlescreen))
-            else:
-                print(f"Unknown character {character}")
     turtlescreen.update()
     # was a debug to check we had correctly destroyed/created turtles.
     print("Turtles " + str(len(turtlescreen.turtles())))
@@ -329,12 +328,20 @@ def validate_command_text(commands_text):
             return False
     return True
 
-# just clear out text of commands/output
 
+def clear(prompt=True):
+    """ Just clear out text of commands/output
 
-def clear():
-    inputtext.delete('1.0', END)
-    clear_executing_text()
+    Args:
+        prompt (_type_): _description_
+    """
+    if prompt:
+        answer = askyesno('Are you sure?', message='Clear all your commands?')
+    else:
+        answer = True
+    if answer:
+        inputtext.delete('1.0', END)
+        clear_executing_text()
 
 
 def wingame():
@@ -356,8 +363,6 @@ def wingame():
 
 
 def reset():
-    # buttonrun["state"] = NORMAL # if you disable button, then this is how to
-    # re-enable
     player.reset()
     stop_timer(True)
     player.goto(player_pos[0], player_pos[1])
@@ -385,7 +390,7 @@ def reset():
 
 
 def startnew():
-    clear()
+    clear(False)
     # clear DELETES all turtles... this includes player/pen turtles.
     turtlescreen.clear()
     turtlescreen.bgcolor("cyan")
@@ -401,15 +406,13 @@ def startnew():
     global pen
     global player
     pen = Pen(turtlescreen)
-    player = Drone(walls, keys, doors, treasures,
-                   destructibles, lazers, turtlescreen)
+    player = Drone(walls, keys, doors, treasures, destructibles, lazers, turtlescreen)
     canvas.tag_raise(player)
     # set up maze (also creates treasures turtles)
     setup_maze(maps[random.randrange(len(maps))])
     # Game over message printing, perhaps change this to something else.
     global turtle
-    # as this is the "game over" message pen, associated with the screen,
-    # recreate.
+    # as this is the "game over" message pen, associated with the screen, recreate.
     turtle = RawTurtle(turtlescreen)
     turtle.penup()
     turtle.hideturtle()
@@ -458,7 +461,7 @@ if __name__ == "__main__":
     legend.grid(row=1, column=0, sticky='w')
     legend.config(width=350, height=650)
     # grab images
-    droneimage = PhotoImage(file="./image/drone.gif")
+    droneimage = PhotoImage(file="./image/drone-up.gif")
     wallimage = PhotoImage(file="./image/block.gif")
     keyimage = PhotoImage(file="./image/key.gif")
     doorimage = PhotoImage(file="./image/door.gif")
@@ -497,7 +500,7 @@ if __name__ == "__main__":
     commandslabel.grid(column=0, row=0, sticky="new")
     textlabel = Label(frameleft, text="Enter commands in text box and click run")
     textlabel.grid(row=1, column=0, stick='ews')
-    inputtext = Text(frameleft, height=30, width=40)
+    inputtext = scrolledtext.ScrolledText(frameleft, height=30, width=40)
     inputtext.grid(row=2, column=0)
     buttonrun = Button(frameleft, text="Run Commands", command=run)
     buttonrun.grid(row=3, column=0, sticky='ews')
