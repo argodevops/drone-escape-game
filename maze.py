@@ -484,7 +484,7 @@ if __name__ == "__main__":
 
     # LEGEND -- long winded but...
     legendlabel = Label(frameright, text="Maze Legend",
-                        font=('Arial', 15), height=2)
+                        font=('Arial', 15, 'underline'), height=2)
     legendlabel.grid(column=0, row=0)
     legend = Canvas(frameright)
     legend.grid(row=1, column=0, sticky='w')
@@ -521,11 +521,13 @@ if __name__ == "__main__":
         90, 345, text="Destructible Wall (need laser)", anchor=NW)
    
 #Insturctions for the player to type commands are as follows:
-    legend.create_text(110, 450, text="Commands", anchor=NW, font=('Arial', '14'))
-    legend.create_text(0, 490, text="To Move in the direction you are facing,\nuse 'MOVE 'x' where 'x' is the number \nof spaces to move", anchor=NW, font=('Arial', '12')) 
-    legend.create_text(0, 560, text="To Turn Left, use 'LEFT'", anchor=NW, font=('Arial', '12'))
-    legend.create_text(0, 590, text="To Turn Right, use 'RIGHT'", anchor=NW, font=('Arial', '12'))
-    legend.create_text(0, 620, text="To Fire the Laser, use 'FIRE'", anchor=NW, font=('Arial', '12'))
+    legend.create_text(110, 410, text="Commands", anchor=NW, font=('Arial', '14', 'underline'))
+    legend.create_text(0, 460, text="Commands are NOT case sensitive:" , anchor=NW, font=('Arial', '12', 'bold'))
+    legend.create_text(0, 500, text="To Move in the direction you are facing,\nuse 'MOVE 'x' where 'x' is the number \nof spaces to move", anchor=NW, font=('Arial', '12')) 
+    legend.create_text(0, 570, text="To Turn Left 90"+ u'\u00B0' + ", use 'TURN LEFT'", anchor=NW, font=('Arial', '12'))
+    legend.create_text(0, 600, text="To Turn Right 90"+ u'\u00B0' + ", use 'TURN RIGHT'", anchor=NW, font=('Arial', '12'))
+    legend.create_text(0, 630, text="To Fire the Laser, use 'FIRE'", anchor=NW, font=('Arial', '12'))
+
 
     # GAME CANVAS
     canvas = Canvas(root)
