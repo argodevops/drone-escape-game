@@ -24,48 +24,44 @@ class Drone(RawTurtle):
             doors,
             treasures,
             destructibles,
-            guns,
+            lazers,
             screen):
         RawTurtle.__init__(self, screen)
-        screen.register_shape("./image/drone.gif")
+        screen.register_shape("./image/drone-up.gif")
+        screen.register_shape("./image/drone-down.gif")
+        screen.register_shape("./image/drone-left.gif")
+        screen.register_shape("./image/drone-right.gif")
         self.reset()
-        self.walls = walls
         self.hideturtle()
-        self.isdead = False
-        self.direction = 'UP'
-        # so player knows walls rather than game decides, so will need to know
-        # other things.
-        self.keys = 0
-        self.gold = 0
+        # drone knows all about maze stuff
+        self.walls = walls
         self.keyset = keyset
         self.doors = doors
         self.treasures = treasures
-        self.delay = 1
         self.destructibles = destructibles
-        self.guns = guns
-        self.haslaser = False
+        self.lazers = lazers
 
     def reset(self):
         """
         Resets everything
         """
-        self.shape("./image/drone.gif")
+        self.shape("./image/drone-down.gif")
         self.color("blue")
         self.penup()
         self.delay = 1
-        self.gold = 0
-        self.direction = 'UP'
+        self.speedup = 0
+        self.direction = 'DOWN'
         self.isdead = False
         self.keys = 0
         self.haslaser = False
 
-    def processgold(self):
+    def process_speedup(self):
         """
-        Gold speed up
+        Speed up
         """
-        if self.gold > 0:
-            self.gold -= 1
-        if self.gold <= 0:
+        if self.speedup > 0:
+            self.speedup -= 1
+        if self.speedup <= 0:
             self.delay = 1
 
     def processmove(self, pos_x, pos_y):
@@ -79,7 +75,7 @@ class Drone(RawTurtle):
         Returns:
             _type_: _description_
         """
-        self.processgold()
+        self.process_speedup()
         # did we collide with a wall?
         if (pos_x, pos_y) in self.walls:
             return False
@@ -88,10 +84,10 @@ class Drone(RawTurtle):
         # potential refactor, just stash ALL into one collection of map objects
         # and then act on type?
         # pick up laser.
-        for gun in self.guns:
-            if (gun.get_x() == pos_x and gun.get_y() == pos_y and gun.is_active()):
+        for lazer in self.lazers:
+            if (lazer.get_x() == pos_x and lazer.get_y() == pos_y and lazer.is_active()):
                 self.haslaser = True
-                gun.destroy()
+                lazer.destroy()
 
         # ran into destructible wall?
         for destructible in self.destructibles:
@@ -105,9 +101,9 @@ class Drone(RawTurtle):
                 treasure.destroy()
                 # 20s at 0.5 delay, 40 moves basically... and turns are a move
                 # too.
-                self.gold += 40
+                self.speedup += 40
                 # depending on map it may take longer to collect and return
-                # gold than to ignore it.
+                # speedup than to ignore it.
                 self.delay = 0.5
 
         for key in self.keyset:
@@ -200,27 +196,35 @@ class Drone(RawTurtle):
         Args:
             turn_direction (_type_): _description_
         """
-        self.processgold()
+        self.process_speedup()
         turn_direction = turn_direction.upper()
         print(f" * TURN {turn_direction}")
         if turn_direction == "RIGHT":
             if self.direction == "UP":
                 self.direction = "RIGHT"
+                self.shape("./image/drone-right.gif")
             elif self.direction == "RIGHT":
                 self.direction = "DOWN"
+                self.shape("./image/drone-down.gif")
             elif self.direction == "DOWN":
                 self.direction = "LEFT"
+                self.shape("./image/drone-left.gif")
             elif self.direction == "LEFT":
                 self.direction = "UP"
+                self.shape("./image/drone-up.gif")
         elif turn_direction == "LEFT":
             if self.direction == "UP":
                 self.direction = "LEFT"
+                self.shape("./image/drone-left.gif")
             elif self.direction == "RIGHT":
                 self.direction = "UP"
+                self.shape("./image/drone-up.gif")
             elif self.direction == "DOWN":
                 self.direction = "RIGHT"
+                self.shape("./image/drone-right.gif")
             elif self.direction == "LEFT":
                 self.direction = "DOWN"
+                self.shape("./image/drone-down.gif")
         else:
             print(f"Unknown turn direction {turn_direction}")
 
@@ -231,7 +235,7 @@ class Drone(RawTurtle):
         screen.register_shape("./image/zombie.gif")
         self.shape("./image/zombie.gif")
         self.isdead = True
-        self.gold = 0
+        self.speedup = 0
         self.delay = 1
 
     def player_dead(self):
