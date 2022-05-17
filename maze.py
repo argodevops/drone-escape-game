@@ -1,14 +1,12 @@
 """Maze module."""
-from turtle import RawTurtle, TurtleScreen
+from turtle import RawTurtle, TurtleScreen, color
 from tkinter import *
 from tkinter import scrolledtext
-import sys
-import time
+from tkinter.messagebox import askyesno
 import threading
 import re
 import json
 import random
-import pygame
 from numpy import array
 from drone import Drone
 from timer import Timer
@@ -98,7 +96,7 @@ class GameObject(RawTurtle):
         return self.active
 
 
-# could have destroyable blocks that the users can destroy with a drones gun?but that may be a bit... aggressive. But it'd
+# could have destroyable blocks that the users can destroy with a drones lazer?but that may be a bit... aggressive. But it'd
 # give even more interesting possibilities.
 class DoorKey(GameObject):
     def __init__(self, x, y, screen):
@@ -149,7 +147,7 @@ class Destructable(GameObject):
         self.color("pink")
 
 
-class Gun(GameObject):
+class Lazer(GameObject):
     def __init__(self, x, y, screen):
         super().__init__(x, y, screen)
         screen.register_shape("./image/laser.gif")
@@ -196,20 +194,17 @@ def setup_maze(level: array):
             elif character == "A":
                 global GAMEEXIT
                 GAMEEXIT = [maze_x, maze_y]
+                print(GAMEEXIT)
             elif character == "T":
                 treasures.append(Treasure(maze_x, maze_y, turtlescreen))
             elif character == "G":
-                gun.append(Gun(maze_x, maze_y, turtlescreen))
+                lazers.append(Lazer(maze_x, maze_y, turtlescreen))
             elif character == "D":
-                destructibles.append(Destructable(
-                    maze_x, maze_y, turtlescreen))
+                destructibles.append(Destructable(maze_x, maze_y, turtlescreen))
             elif character == "W":
                 doors.append(Door(maze_x, maze_y, turtlescreen))
             elif character == "K":
                 keys.append(DoorKey(maze_x, maze_y, turtlescreen))
-            elif character == "G":
-                # Now graphic or turtle here? Nor letting player know...
-                print(f"Goal defined at {pos_x}, {pos_y}")
     turtlescreen.update()
     # was a debug to check we had correctly destroyed/created turtles.
     print("Turtles " + str(len(turtlescreen.turtles())))
@@ -221,14 +216,12 @@ def gameover():
     """
     buttonrun["state"] = NORMAL
     stop_timer()
+    turtlescreen.bgcolor("tomato")
     turtle.penup()
     turtle.goto(-400, -100)
-    turtle.color("red")
-    turtle.write(
-        "GAME OVER", align="left", font=(
-            "Courier", 110))
+    turtle.color("navy")
+    turtle.write("GAME OVER", align="left", font=("Courier", 110))
     turtle.goto(2000, 2000)
-
 
 def start_timer():
     buttonrun["state"] = DISABLED
@@ -270,18 +263,16 @@ def move_drone(player: Drone, instructions):
             player.turn(commands[1])
         elif commands[0].upper() == 'MOVE':
             for _ in range(0, int(commands[1])):
-                if player.xcor() == GAMEEXIT[0] and player.ycor(
-                ) == GAMEEXIT[1]:
+                print(player.xcor())
+                print(player.ycor())
+                if player.xcor() == GAMEEXIT[0] and player.ycor() == GAMEEXIT[1]:
                     wingame()
                     return
                 if not player.move():
                     gameover()
-                    # could disable button but unnecessary as they don't move if dead.
-                    # buttonrun["state"] = DISABLED
                     return False
         else:
             print_executing_text('Unknown command: ' + instruction)
-            # could disable run button or highlight text red etc?
             player.dead()
             gameover()
             return False
@@ -339,24 +330,30 @@ def validate_command_text(commands_text):
             return False
     return True
 
-# just clear out text of commands/output
 
+def clear(prompt=True):
+    """ Just clear out text of commands/output
 
-def clear():
-    inputtext.delete('1.0', END)
-    clear_executing_text()
+    Args:
+        prompt (_type_): _description_
+    """
+    if prompt:
+        answer = askyesno('Are you sure?', message='Clear all your commands?')
+    else:
+        answer = True
+    if answer:
+        inputtext.delete('1.0', END)
+        clear_executing_text()
 
 
 def wingame():
     global GAMEWON
     GAMEWON = True
-    # stop timer
+    stop_timer()
     turtle.penup()
     turtle.goto(-350, -100)
     turtle.color("green")
-    turtle.write(
-        "YOU WIN!", align="left", font=(
-            "Courier", 110))
+    turtle.write("YOU WIN!", align="left", font=("Courier", 110))
     turtle.goto(2000, 2000)
     messages.win()
 
@@ -368,10 +365,10 @@ def wingame():
 
 
 def reset():
-    # buttonrun["state"] = NORMAL # if you disable button, then this is how to
-    # re-enable
     player.reset()
     stop_timer(True)
+    turtle.clear()
+    turtlescreen.bgcolor("cyan")
     player.goto(player_pos[0], player_pos[1])
     for treasure in treasures:
         treasure.respawn()
@@ -379,26 +376,27 @@ def reset():
         key.respawn()
     for door in doors:
         door.respawn()
-    for laser in gun:
-        laser.respawn()
+    for lazer in lazers:
+        lazer.respawn()
     for destructible in destructibles:
         destructible.respawn()
     global GAMEWON
     GAMEWON = False
     # this is the "game over" pen being cleared of any writing done.
-    turtle.clear()
 
-# Should remove commands entered/ran from Textboxes.
-# It DESTROYS all turtle objects via calling clear on the screen. This means they need recreating.
-# turtlescreen.clear therefore destroys player, treasures, doors, keys, and the wall drawing "pen" turtle.
-# Must therefore create player, the turtle to draw the maze (the creation of maze creates treasures/doors/keys turtle)
-# Therefore has to clear the lists that are passed to the player/drone
-# Turtle prior to creating from map.
+def startnew(prompt = True):
+    """
+    Should remove commands entered/ran from Textboxes.
+    It DESTROYS all turtle objects via calling clear on the screen. This means they need recreating.
+    turtlescreen.clear therefore destroys player, treasures, doors, keys, and the wall drawing "pen" turtle.
+    Must therefore create player, the turtle to draw the maze (the creation of maze creates treasures/doors/keys turtle)
+    Therefore has to clear the lists that are passed to the player/drone
+    Turtle prior to creating from map.
 
-
-def startnew():
-    # buttonrun["state"] = NORMAL
-    clear()
+    Args:
+        prompt (bool, optional): _description_. Defaults to False.
+    """
+    clear(prompt)
     # clear DELETES all turtles... this includes player/pen turtles.
     turtlescreen.clear()
     turtlescreen.bgcolor("cyan")
@@ -408,21 +406,19 @@ def startnew():
     walls.clear()
     treasures.clear()
     destructibles.clear()
-    gun.clear()
+    lazers.clear()
     # we need to refer to global pen/player lest fan and x attempt merge, and
     # so create new turtles
     global pen
     global player
     pen = Pen(turtlescreen)
-    player = Drone(walls, keys, doors, treasures,
-                   destructibles, gun, turtlescreen)
+    player = Drone(walls, keys, doors, treasures, destructibles, lazers, turtlescreen)
     canvas.tag_raise(player)
     # set up maze (also creates treasures turtles)
     setup_maze(maps[random.randrange(len(maps))])
     # Game over message printing, perhaps change this to something else.
     global turtle
-    # as this is the "game over" message pen, associated with the screen,
-    # recreate.
+    # as this is the "game over" message pen, associated with the screen, recreate.
     turtle = RawTurtle(turtlescreen)
     turtle.penup()
     turtle.hideturtle()
@@ -432,20 +428,13 @@ def startnew():
     GAMEWON = False
     stop_timer(True)
 
-# Incase of button to exit addition for now? Reality is you can just click
-# X on window this is unnecessary...
-
-
-# def exit():
-#     sys.exit(0)
-
 
 # main command?
 # TODO extract out the load of map to function
 if __name__ == "__main__":
     # set up properties
     root = Tk()
-    root.title("Game")
+    root.title("Drone Escape Game")
     root.geometry('1650x950')
     # weights supposed to proportion available real-estate appropriately.
     root.grid_columnconfigure(0, weight=2)
@@ -465,20 +454,20 @@ if __name__ == "__main__":
     frameright.grid(column=2, row=1, sticky='n')
 
     # create top frame widget
-    titlelabel = Label(frametop, text="Drone Escape", font=('Arial', 30))
+    # nasty padding as i can't find how to right align the timer
+    titlelabel = Label(frametop, text="DRONE ESCAPE", font=('Arial', 26), height=2, fg='navy', padx=230)
     titlelabel.grid(column=0, row=0)
-    # label = Label(frametop, text="Write your commands in text box and click run")
-    # label.grid(column=0, row=1)
-
+    timerlabel = Label(frametop, text="00:00:00", font=('Arial', 18), height=2)
+    timerlabel.grid(column=1, row=0)
+    
     # LEGEND -- long winded but...
-    legendlabel = Label(frameright, text="Maze Legend",
-                        font=('Arial', 15), height=2)
+    legendlabel = Label(frameright, text="Maze Legend", font=('Arial', 15), height=2)
     legendlabel.grid(column=0, row=0)
     legend = Canvas(frameright)
     legend.grid(row=1, column=0, sticky='w')
     legend.config(width=350, height=650)
     # grab images
-    droneimage = PhotoImage(file="./image/drone.gif")
+    droneimage = PhotoImage(file="./image/drone-up.gif")
     wallimage = PhotoImage(file="./image/block.gif")
     keyimage = PhotoImage(file="./image/key.gif")
     doorimage = PhotoImage(file="./image/door.gif")
@@ -503,10 +492,9 @@ if __name__ == "__main__":
     legend.create_image(20, 260, image=deaddrone, anchor=NW)
     legend.create_text(90, 265, text="Crashed Drone", anchor=NW)
     legend.create_image(20, 300, image=laserimage, anchor=NW)
-    legend.create_text(90, 305, text="Drone Laser (pickup)", anchor=NW)
+    legend.create_text(90, 305, text="Drone Lazer (pickup)", anchor=NW)
     legend.create_image(20, 340, image=destructibleimage, anchor=NW)
-    legend.create_text(
-        90, 345, text="Destructible Wall (need laser)", anchor=NW)
+    legend.create_text(90, 345, text="Destructible Wall (need lazer)", anchor=NW)
 
     # GAME CANVAS
     canvas = Canvas(root)
@@ -518,7 +506,7 @@ if __name__ == "__main__":
     commandslabel.grid(column=0, row=0, sticky="new")
     textlabel = Label(frameleft, text="Enter commands in text box and click run")
     textlabel.grid(row=1, column=0, stick='ews')
-    inputtext = Text(frameleft, height=30, width=40)
+    inputtext = scrolledtext.ScrolledText(frameleft, height=30, width=40)
     inputtext.grid(row=2, column=0)
     buttonrun = Button(frameleft, text="Run Commands", command=run)
     buttonrun.grid(row=3, column=0, sticky='ews')
@@ -528,8 +516,6 @@ if __name__ == "__main__":
     buttonreset.grid(row=5, column=0, sticky='esw')
     buttonnewgame = Button(frameleft, text='New Game', command=startnew)
     buttonnewgame.grid(row=6, column=0, sticky='esw')
-    timerlabel = Label(frameleft, text="00:00:00", font=('Arial', 15), height=2)
-    timerlabel.grid(row=7, column=0, sticky='esw')
 
     # BOTTOM FRAME (scrollable executing command window) -- simply indicates
     # last command incase of errors.
@@ -556,16 +542,15 @@ if __name__ == "__main__":
     doors = []
     keys = []
     destructibles = []
-    gun = []
-    # player position as [x,y] pair in list; global so we can reset player
-    # position.
+    lazers = []
+    # player position as [x,y] pair in list; global so we can reset player position.
     player_pos = []
     speed = 1
     GAMEWON = False
     # load maps (global)
     maps = load_maps()
     # do the map setup.
-    startnew()
+    startnew(False)
     gold_left = 3
     turtlescreen.update()
     root.mainloop()
