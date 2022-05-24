@@ -225,6 +225,10 @@ def gameover():
     turtle.goto(-400, -100)
     turtle.color("navy")
     turtle.write("GAME OVER", align="left", font=("Courier", 110))
+    turtle.goto(-300, -350)
+    #turtle.color("navy")
+    turtle.write("Press \"Reset Game\" to Play Again", align="left", font=("Courier", 24))
+    
     turtle.goto(2000, 2000)
 
 def start_timer():
@@ -267,8 +271,6 @@ def move_drone(player: Drone, instructions):
             player.turn(commands[1])
         elif commands[0].upper() == 'MOVE':
             for _ in range(0, int(commands[1])):
-                print(player.xcor())
-                print(player.ycor())
                 if player.xcor() == GAMEEXIT[0] and player.ycor() == GAMEEXIT[1]:
                     wingame()
                     return
@@ -281,6 +283,8 @@ def move_drone(player: Drone, instructions):
             gameover()
             return False
         turtlescreen.update()
+    if not GAMEWON:
+        gameover()
     return True
 
 # take user input and run commands on the map (clear executingtext textbox first)
@@ -468,7 +472,7 @@ if __name__ == "__main__":
 
     # create top frame widget
     # nasty padding as i can't find how to right align the timer
-    titlelabel = Label(frametop, text="DRONE ESCAPE", font=('Arial', 26), height=2, fg='navy', padx=230)
+    titlelabel = Label(frametop, text="DRONE ESCAPE", font=('Arial', 26), height=2, fg='black', padx=230)
     titlelabel.grid(column=0, row=0)
     timerlabel = Label(frametop, text="00:00:00", font=('Arial', 18), height=2)
     timerlabel.grid(column=1, row=0)
@@ -478,7 +482,7 @@ if __name__ == "__main__":
     legendlabel.grid(column=0, row=0)
     legend = Canvas(frameright)
     legend.grid(row=1, column=0, sticky='w')
-    legend.config(width=350, height=650)
+    legend.config(width=350, height=700)
     # grab images
     droneimage = PhotoImage(file="./image/drone-up.gif")
     wallimage = PhotoImage(file="./image/block.gif")
@@ -510,12 +514,13 @@ if __name__ == "__main__":
     legend.create_text(90, 345, text="Destructible Wall (need lazer)", anchor=NW)
 
 #Insturctions for the player to type commands are as follows:
-    legend.create_text(110, 410, text="Commands", anchor=NW, font=('Arial', '14', 'underline'))
-    legend.create_text(0, 450, text="Commands are NOT case sensitive:" , anchor=NW, font=('Arial', '12', 'bold'))
-    legend.create_text(0, 490, text="To Move in the direction you are facing,\nuse 'MOVE 'x' where 'x' is the number \nof spaces to move", anchor=NW, font=('Arial', '12'))
-    legend.create_text(0, 560, text="To Turn Left 90" + u'\u00B0' + ", use 'TURN LEFT'", anchor=NW, font=('Arial', '12'))
-    legend.create_text(0, 590, text="To Turn Right 90" + u'\u00B0' + ", use 'TURN RIGHT'", anchor=NW, font=('Arial', '12'))
-    legend.create_text(0, 620, text="To Fire the Laser, use 'FIRE'", anchor=NW, font=('Arial', '12'))
+    legend.create_text(110, 410, text="Instructions", anchor=NW, font=('Arial', '15', 'underline'))
+    legend.create_text(0, 450, text="Starting at the top left navigate the drone to the \nfinish at the botton right.", anchor=NW)
+    legend.create_text(0, 500, text="Commands are NOT case sensitive" , anchor=NW, font=('Arial', '12', 'bold'))
+    legend.create_text(0, 530, text="To Move forward in the direction you are facing,\nuse 'MOVE 'x' where 'x' is the number \nof spaces to move", anchor=NW)
+    legend.create_text(0, 600, text="To Turn Left 90" + u'\u00B0' + ", use 'TURN LEFT'", anchor=NW)
+    legend.create_text(0, 630, text="To Turn Right 90" + u'\u00B0' + ", use 'TURN RIGHT'", anchor=NW)
+    legend.create_text(0, 660, text="To Fire the Laser, use 'FIRE'", anchor=NW)
 
     # GAME CANVAS
     canvas = Canvas(root)
@@ -532,8 +537,11 @@ if __name__ == "__main__":
 
     frameButtonsTurn = Frame(frameleft)
     frameButtonsTurn.grid(row=3, column=0, sticky='ews')
+    
+    frameButtonsAction = Frame(frameleft)
+    frameButtonsAction.grid(row=4, column=0, sticky='ews')
 
-    buttonMove = Label(frameButtonsMove, text="MOVE", font=('Arial', 12), width=5)
+    buttonMove = Label(frameButtonsMove, text="MOVE", font=('Arial', 12), width=7)
     buttonMove.grid(row=0, column=0)
     buttonOne = Button(frameButtonsMove, text="1", command=lambda: commandText("MOVE 1\n"))
     buttonOne.grid(row=0, column=1)
@@ -550,29 +558,28 @@ if __name__ == "__main__":
     buttonTen = Button(frameButtonsMove, text="10", command=lambda: commandText("MOVE 10\n"))
     buttonTen.grid(row=0, column=7)
 
-    buttonTurn = Label(frameButtonsTurn, text="TURN", font=('Arial', 12), width=5)
+    buttonTurn = Label(frameButtonsTurn, text="TURN", font=('Arial', 12), width=7)
     buttonTurn.grid(row=0, column=0)
     buttonLeft = Button(frameButtonsTurn, text="LEFT", command=lambda: commandText("TURN LEFT\n"))
     buttonLeft.grid(row=0, column=1)
     buttonRight = Button(frameButtonsTurn, text="RIGHT", command=lambda: commandText("TURN RIGHT\n"))
     buttonRight.grid(row=0, column=2)
-    fireLabel = Label(frameButtonsTurn, text="ACTION", font=('Arial', 12), width=7)
-    fireLabel.grid(row=0, column=3)
-    buttonFire = Button(frameButtonsTurn, text="FIRE", command=lambda: commandText("FIRE\n"))
-    buttonFire.grid(row=0, column=4)
-
-
+    
+    fireLabel = Label(frameButtonsAction, text="ACTION", font=('Arial', 12), width=7)
+    fireLabel.grid(row=0, column=0)
+    buttonFire = Button(frameButtonsAction, text="FIRE", command=lambda: commandText("FIRE\n"))
+    buttonFire.grid(row=0, column=1)
 
     inputtext = scrolledtext.ScrolledText(frameleft, height=30, width=40)
-    inputtext.grid(row=4, column=0)
+    inputtext.grid(row=5, column=0)
     buttonrun = Button(frameleft, text="Run Commands", command=run)
-    buttonrun.grid(row=5, column=0, sticky='ews')
+    buttonrun.grid(row=6, column=0, sticky='ews')
     buttonclear = Button(frameleft, text="Clear Commands", command=clear)
-    buttonclear.grid(row=6, column=0, sticky='ews')
+    buttonclear.grid(row=7, column=0, sticky='ews')
     buttonreset = Button(frameleft, text='Reset Game (keeps commands)', command=reset)
-    buttonreset.grid(row=7, column=0, sticky='esw')
+    buttonreset.grid(row=8, column=0, sticky='esw')
     buttonnewgame = Button(frameleft, text='New Game', command=startnew)
-    buttonnewgame.grid(row=8, column=0, sticky='esw')
+    buttonnewgame.grid(row=9, column=0, sticky='esw')
 
     # BOTTOM FRAME (scrollable executing command window) -- simply indicates
     # last command incase of errors.
