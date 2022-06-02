@@ -26,6 +26,7 @@ class Pen(RawTurtle):
         """
         RawTurtle.__init__(self, screen)
         screen.register_shape("./image/block.gif")
+        screen.register_shape("./image/flag.gif")
         self.shape("./image/block.gif")
         self.color("white")
         self.penup()  # don't draw lines as turtle moves.
@@ -94,7 +95,6 @@ class GameObject(RawTurtle):
             _type_: _description_
         """
         return self.active
-
 
 # could have destroyable blocks that the users can destroy with a drones lazer?but that may be a bit... aggressive. But it'd
 # give even more interesting possibilities.
@@ -193,6 +193,10 @@ def setup_maze(level: array):
                 player.showturtle()
             elif character == "A":
                 global GAMEEXIT
+                pen.goto(maze_x, maze_y)
+                pen.shape("./image/flag.gif")
+                pen.stamp()
+                pen.shape("./image/block.gif")
                 GAMEEXIT = [maze_x, maze_y]
                 print(GAMEEXIT)
             elif character == "T":
@@ -221,6 +225,10 @@ def gameover():
     turtle.goto(-400, -100)
     turtle.color("navy")
     turtle.write("GAME OVER", align="left", font=("Courier", 110))
+    turtle.goto(-300, -350)
+    #turtle.color("navy")
+    turtle.write("Press \"Reset Game\" to Play Again", align="left", font=("Courier", 24))
+    
     turtle.goto(2000, 2000)
 
 def start_timer():
@@ -263,8 +271,6 @@ def move_drone(player: Drone, instructions):
             player.turn(commands[1])
         elif commands[0].upper() == 'MOVE':
             for _ in range(0, int(commands[1])):
-                print(player.xcor())
-                print(player.ycor())
                 if player.xcor() == GAMEEXIT[0] and player.ycor() == GAMEEXIT[1]:
                     wingame()
                     return
@@ -277,6 +283,8 @@ def move_drone(player: Drone, instructions):
             gameover()
             return False
         turtlescreen.update()
+    if not GAMEWON:
+        gameover()
     return True
 
 # take user input and run commands on the map (clear executingtext textbox first)
@@ -295,6 +303,12 @@ def run():
         start_timer()
         move_drone(player, commands_text)
 
+    # This would enable the Run button after completing the Text commands.
+    # However, run starts a timer. May be best if timer was paused after commands..
+    # and run just starts timer, so one timer unless reset/new game/end scenario used?
+    # so commented out for now.
+    # buttonrun["state"] = NORMAL
+
 # print executing text to end of list
 def print_executing_text(text):
     executingtext.configure(state='normal')
@@ -307,6 +321,9 @@ def clear_executing_text():
     executingtext.configure(state='normal')
     executingtext.delete('1.0', END)
     executingtext.configure(state='disabled')
+
+def commandText(text):
+    inputtext.insert(END, text)
 
 # validate command text. Don't execute commands if not valid.
 def validate_command_text(commands_text):
@@ -450,22 +467,22 @@ if __name__ == "__main__":
     frameright = Frame(root)
     frametop.grid(column=0, row=0, columnspan=3)
     framebottom.grid(column=1, row=2, sticky='nw')
-    frameleft.grid(column=0, row=1, sticky='n')
+    frameleft.grid(column=0, row=1, rowspan=2, sticky='n')
     frameright.grid(column=2, row=1, sticky='n')
 
     # create top frame widget
     # nasty padding as i can't find how to right align the timer
-    titlelabel = Label(frametop, text="DRONE ESCAPE", font=('Arial', 26), height=2, fg='navy', padx=230)
+    titlelabel = Label(frametop, text="DRONE ESCAPE", font=('Arial', 26), height=2, fg='black', padx=230)
     titlelabel.grid(column=0, row=0)
     timerlabel = Label(frametop, text="00:00:00", font=('Arial', 18), height=2)
     timerlabel.grid(column=1, row=0)
-    
+
     # LEGEND -- long winded but...
     legendlabel = Label(frameright, text="Maze Legend", font=('Arial', 15, 'underline'), height=2)
     legendlabel.grid(column=0, row=0)
     legend = Canvas(frameright)
     legend.grid(row=1, column=0, sticky='w')
-    legend.config(width=350, height=650)
+    legend.config(width=350, height=700)
     # grab images
     droneimage = PhotoImage(file="./image/drone-up.gif")
     wallimage = PhotoImage(file="./image/block.gif")
@@ -495,14 +512,15 @@ if __name__ == "__main__":
     legend.create_text(90, 305, text="Drone Lazer (pickup)", anchor=NW)
     legend.create_image(20, 340, image=destructibleimage, anchor=NW)
     legend.create_text(90, 345, text="Destructible Wall (need lazer)", anchor=NW)
-   
+
 #Insturctions for the player to type commands are as follows:
-    legend.create_text(110, 410, text="Commands", anchor=NW, font=('Arial', '14', 'underline'))
-    legend.create_text(0, 450, text="Commands are NOT case sensitive:" , anchor=NW, font=('Arial', '12', 'bold'))
-    legend.create_text(0, 490, text="To Move in the direction you are facing,\nuse 'MOVE 'x' where 'x' is the number \nof spaces to move", anchor=NW, font=('Arial', '12')) 
-    legend.create_text(0, 560, text="To Turn Left 90" + u'\u00B0' + ", use 'TURN LEFT'", anchor=NW, font=('Arial', '12'))
-    legend.create_text(0, 590, text="To Turn Right 90" + u'\u00B0' + ", use 'TURN RIGHT'", anchor=NW, font=('Arial', '12'))
-    legend.create_text(0, 620, text="To Fire the Laser, use 'FIRE'", anchor=NW, font=('Arial', '12'))
+    legend.create_text(110, 410, text="Instructions", anchor=NW, font=('Arial', '15', 'underline'))
+    legend.create_text(0, 450, text="Starting at the top left navigate the drone to the \nfinish at the botton right.", anchor=NW)
+    legend.create_text(0, 500, text="Commands are NOT case sensitive" , anchor=NW, font=('Arial', '12', 'bold'))
+    legend.create_text(0, 530, text="To Move forward in the direction you are facing,\nuse 'MOVE 'x' where 'x' is the number \nof spaces to move", anchor=NW)
+    legend.create_text(0, 600, text="To Turn Left 90" + u'\u00B0' + ", use 'TURN LEFT'", anchor=NW)
+    legend.create_text(0, 630, text="To Turn Right 90" + u'\u00B0' + ", use 'TURN RIGHT'", anchor=NW)
+    legend.create_text(0, 660, text="To Fire the Laser, use 'FIRE'", anchor=NW)
 
     # GAME CANVAS
     canvas = Canvas(root)
@@ -512,18 +530,56 @@ if __name__ == "__main__":
     # LEFT FRAME (Commands box + buttons)
     commandslabel = Label(frameleft, text="Commands Entry List", font=('Arial', 15))
     commandslabel.grid(column=0, row=0, sticky="new")
-    textlabel = Label(frameleft, text="Enter commands in text box and click run")
+    textlabel = Label(frameleft, text="Type commands in text box, or use buttons below")
     textlabel.grid(row=1, column=0, stick='ews')
+    frameButtonsMove = Frame(frameleft)
+    frameButtonsMove.grid(row=2, column=0, sticky='ews')
+
+    frameButtonsTurn = Frame(frameleft)
+    frameButtonsTurn.grid(row=3, column=0, sticky='ews')
+    
+    frameButtonsAction = Frame(frameleft)
+    frameButtonsAction.grid(row=4, column=0, sticky='ews')
+
+    buttonMove = Label(frameButtonsMove, text="MOVE", font=('Arial', 12), width=7)
+    buttonMove.grid(row=0, column=0)
+    buttonOne = Button(frameButtonsMove, text="1", command=lambda: commandText("MOVE 1\n"))
+    buttonOne.grid(row=0, column=1)
+    buttonTwo = Button(frameButtonsMove, text="2", command=lambda: commandText("MOVE 2\n"))
+    buttonTwo.grid(row=0, column=2)
+    buttonThree = Button(frameButtonsMove, text="3", command=lambda: commandText("MOVE 3\n"))
+    buttonThree.grid(row=0, column=3)
+    buttonFour = Button(frameButtonsMove, text="4", command=lambda: commandText("MOVE 4\n"))
+    buttonFour.grid(row=0, column=4)
+    buttonFive = Button(frameButtonsMove, text="5", command=lambda: commandText("MOVE 5\n"))
+    buttonFive.grid(row=0, column=5)
+    buttonSeven = Button(frameButtonsMove, text="7", command=lambda: commandText("MOVE 7\n"))
+    buttonSeven.grid(row=0, column=6)
+    buttonTen = Button(frameButtonsMove, text="10", command=lambda: commandText("MOVE 10\n"))
+    buttonTen.grid(row=0, column=7)
+
+    buttonTurn = Label(frameButtonsTurn, text="TURN", font=('Arial', 12), width=7)
+    buttonTurn.grid(row=0, column=0)
+    buttonLeft = Button(frameButtonsTurn, text="LEFT", command=lambda: commandText("TURN LEFT\n"))
+    buttonLeft.grid(row=0, column=1)
+    buttonRight = Button(frameButtonsTurn, text="RIGHT", command=lambda: commandText("TURN RIGHT\n"))
+    buttonRight.grid(row=0, column=2)
+    
+    fireLabel = Label(frameButtonsAction, text="ACTION", font=('Arial', 12), width=7)
+    fireLabel.grid(row=0, column=0)
+    buttonFire = Button(frameButtonsAction, text="FIRE", command=lambda: commandText("FIRE\n"))
+    buttonFire.grid(row=0, column=1)
+
     inputtext = scrolledtext.ScrolledText(frameleft, height=30, width=40)
-    inputtext.grid(row=2, column=0)
+    inputtext.grid(row=5, column=0)
     buttonrun = Button(frameleft, text="Run Commands", command=run)
-    buttonrun.grid(row=3, column=0, sticky='ews')
+    buttonrun.grid(row=6, column=0, sticky='ews')
     buttonclear = Button(frameleft, text="Clear Commands", command=clear)
-    buttonclear.grid(row=4, column=0, sticky='ews')
-    buttonreset = Button(frameleft, text='Reset Game', command=reset)
-    buttonreset.grid(row=5, column=0, sticky='esw')
+    buttonclear.grid(row=7, column=0, sticky='ews')
+    buttonreset = Button(frameleft, text='Reset Game (keeps commands)', command=reset)
+    buttonreset.grid(row=8, column=0, sticky='esw')
     buttonnewgame = Button(frameleft, text='New Game', command=startnew)
-    buttonnewgame.grid(row=6, column=0, sticky='esw')
+    buttonnewgame.grid(row=9, column=0, sticky='esw')
 
     # BOTTOM FRAME (scrollable executing command window) -- simply indicates
     # last command incase of errors.
