@@ -124,13 +124,6 @@ class Door(GameObject):
 
 
 class Treasure(GameObject):
-    """
-    A treasure object
-
-    Args:
-        turtle (_type_): turtle object
-    """
-
     def __init__(self, x, y, screen):
         super().__init__(x, y, screen)
         screen.register_shape("./image/speedarrow.gif")
@@ -271,12 +264,12 @@ def move_drone(player: Drone, instructions):
             player.turn(commands[1])
         elif commands[0].upper() == 'MOVE':
             for _ in range(0, int(commands[1])):
-                if player.xcor() == GAMEEXIT[0] and player.ycor() == GAMEEXIT[1]:
-                    wingame()
-                    return
                 if not player.move():
                     gameover()
                     return False
+                if player.xcor() == GAMEEXIT[0] and player.ycor() == GAMEEXIT[1]:
+                    wingame()
+                    return
         else:
             print_executing_text('Unknown command: ' + instruction)
             player.dead()
@@ -297,7 +290,7 @@ def run():
     if player.player_dead():
         return
     buttonreset["state"] = DISABLED
-    clear_executing_text() # clear textbox
+    clear_executing_text()  # clear textbox
     # "get" apparently adds newline character to end, so get from start to -1 of end; splitlines splits around newline.
     commands_text = inputtext.get('1.0', 'end-1c').splitlines()
     if validate_command_text(commands_text):
@@ -441,6 +434,7 @@ def startnew(prompt = True):
     global GAMEWON
     GAMEWON = False
     stop_timer(True)
+    buttonrun["state"] = NORMAL
 
 
 # main command?
@@ -449,7 +443,7 @@ if __name__ == "__main__":
     # set up properties
     root = Tk()
     root.title("Drone Escape Game")
-    root.geometry('1650x950')
+    root.geometry('1750x950')
     # weights supposed to proportion available real-estate appropriately.
     root.grid_columnconfigure(0, weight=2)
     root.grid_columnconfigure(1, weight=6)
@@ -479,7 +473,7 @@ if __name__ == "__main__":
     legendlabel.grid(column=0, row=0)
     legend = Canvas(frameright)
     legend.grid(row=1, column=0, sticky='w')
-    legend.config(width=350, height=700)
+    legend.config(width=380, height=750)
     # grab images
     droneimage = PhotoImage(file="./image/drone-up.gif")
     wallimage = PhotoImage(file="./image/block.gif")
@@ -512,17 +506,17 @@ if __name__ == "__main__":
 
     # Insturctions for the player to type commands are as follows:
     legend.create_text(110, 410, text="Instructions", anchor=NW, font=('Arial', '15', 'underline'))
-    legend.create_text(0, 450, text="Starting at the top left navigate the drone to the \nfinish at the botton right.", anchor=NW)
-    legend.create_text(0, 500, text="Commands are NOT case sensitive" , anchor=NW, font=('Arial', '12', 'bold'))
-    legend.create_text(0, 530, text="To Move forward in the direction you are facing,\nuse 'MOVE 'x' where 'x' is the number \nof spaces to move", anchor=NW)
-    legend.create_text(0, 600, text="To Turn Left 90" + u'\u00B0' + ", use 'TURN LEFT'", anchor=NW)
-    legend.create_text(0, 630, text="To Turn Right 90" + u'\u00B0' + ", use 'TURN RIGHT'", anchor=NW)
-    legend.create_text(0, 660, text="To Fire the Laser, use 'FIRE'", anchor=NW)
+    legend.create_text(0, 450, text="Starting at the top left navigate the drone to the \nfinish at the botton right.\nOne key will open one door.\nOne lazer will destroy one section of destructable wall.", anchor=NW)
+    legend.create_text(0, 530, text="Commands are NOT case sensitive" , anchor=NW, font=('Arial', '12', 'bold'))
+    legend.create_text(0, 560, text="To Move forward in the direction you are facing,\nuse 'MOVE 'x' where 'x' is the number \nof spaces to move", anchor=NW)
+    legend.create_text(0, 630, text="To Turn Left 90" + u'\u00B0' + ", use 'TURN LEFT'", anchor=NW)
+    legend.create_text(0, 655, text="To Turn Right 90" + u'\u00B0' + ", use 'TURN RIGHT'", anchor=NW)
+    legend.create_text(0, 680, text="To Fire the Laser, use 'FIRE'", anchor=NW)
 
     # GAME CANVAS
     canvas = Canvas(root)
     canvas.grid(column=1, row=1, sticky='nw')
-    canvas.config(width=900, height=700)
+    canvas.config(width=950, height=800)
 
     # LEFT FRAME (Commands box + buttons)
     commandslabel = Label(frameleft, text="Commands Entry List", font=('Arial', 15))
@@ -580,7 +574,7 @@ if __name__ == "__main__":
 
     # BOTTOM FRAME (scrollable executing command window) -- simply indicates
     # last command incase of errors.
-    executingtext = scrolledtext.ScrolledText(framebottom, height=10, width=112, wrap=WORD, state='disabled')
+    executingtext = scrolledtext.ScrolledText(framebottom, height=10, width=116, wrap=WORD, state='disabled')
     executingtext.grid(row=0, column=0, sticky='news')
 
     # Game canvas screen setup.
