@@ -25,15 +25,6 @@ Edit `messages.py` to configure any URL endpoint which need calling.
 
 ## Task List
 
-MATT
-* Write up game instructions and drone movement commands
-* Drone icon (x4 for direction)
-
-CHRIS
-* Add timer
-* End game REST call
-* Install and run on PI
-
-MIKE
-* Shoot command
 * Resize for 21" screen (lanscape) assuming 16:9 ratio
+* Maze layouts
+* REST call on completing game
