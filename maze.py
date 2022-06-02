@@ -218,7 +218,8 @@ def gameover():
     """_summary_
         Just uses the turtle to write in red on the canvas/screen its attached to
     """
-    buttonrun["state"] = NORMAL
+    buttonrun["state"] = DISABLED
+    buttonreset["state"] = NORMAL
     stop_timer()
     turtlescreen.bgcolor("tomato")
     turtle.penup()
@@ -226,9 +227,8 @@ def gameover():
     turtle.color("navy")
     turtle.write("GAME OVER", align="left", font=("Courier", 110))
     turtle.goto(-300, -350)
-    #turtle.color("navy")
     turtle.write("Press \"Reset Game\" to Play Again", align="left", font=("Courier", 24))
-    
+
     turtle.goto(2000, 2000)
 
 def start_timer():
@@ -240,7 +240,7 @@ def start_timer():
 
 
 def stop_timer(reset = False):
-    buttonrun["state"] = NORMAL
+    #buttonrun["state"] = NORMAL
     if 'timer' in globals():
         if reset:
             timer.reset()
@@ -296,6 +296,7 @@ def run():
     # check they're not just re-running commands without resetting after failing.
     if player.player_dead():
         return
+    buttonreset["state"] = DISABLED
     clear_executing_text() # clear textbox
     # "get" apparently adds newline character to end, so get from start to -1 of end; splitlines splits around newline.
     commands_text = inputtext.get('1.0', 'end-1c').splitlines()
@@ -303,11 +304,6 @@ def run():
         start_timer()
         move_drone(player, commands_text)
 
-    # This would enable the Run button after completing the Text commands.
-    # However, run starts a timer. May be best if timer was paused after commands..
-    # and run just starts timer, so one timer unless reset/new game/end scenario used?
-    # so commented out for now.
-    # buttonrun["state"] = NORMAL
 
 # print executing text to end of list
 def print_executing_text(text):
@@ -382,6 +378,7 @@ def wingame():
 
 
 def reset():
+    buttonrun["state"] = NORMAL
     player.reset()
     stop_timer(True)
     turtle.clear()
@@ -493,7 +490,7 @@ if __name__ == "__main__":
     deaddrone = PhotoImage(file="./image/zombie.gif")
     laserimage = PhotoImage(file="./image/laser.gif")
     destructibleimage = PhotoImage(file="./image/pink.gif")
-    # place image and associated text.
+    # place image and associated text
     legend.create_image(20, 20, image=droneimage, anchor=NW)
     legend.create_text(90, 25, text="Player Drone", anchor=NW)
     legend.create_image(20, 60, image=wallimage, anchor=NW)
@@ -513,7 +510,7 @@ if __name__ == "__main__":
     legend.create_image(20, 340, image=destructibleimage, anchor=NW)
     legend.create_text(90, 345, text="Destructible Wall (need lazer)", anchor=NW)
 
-#Insturctions for the player to type commands are as follows:
+    # Insturctions for the player to type commands are as follows:
     legend.create_text(110, 410, text="Instructions", anchor=NW, font=('Arial', '15', 'underline'))
     legend.create_text(0, 450, text="Starting at the top left navigate the drone to the \nfinish at the botton right.", anchor=NW)
     legend.create_text(0, 500, text="Commands are NOT case sensitive" , anchor=NW, font=('Arial', '12', 'bold'))
@@ -537,7 +534,7 @@ if __name__ == "__main__":
 
     frameButtonsTurn = Frame(frameleft)
     frameButtonsTurn.grid(row=3, column=0, sticky='ews')
-    
+
     frameButtonsAction = Frame(frameleft)
     frameButtonsAction.grid(row=4, column=0, sticky='ews')
 
@@ -564,7 +561,7 @@ if __name__ == "__main__":
     buttonLeft.grid(row=0, column=1)
     buttonRight = Button(frameButtonsTurn, text="RIGHT", command=lambda: commandText("TURN RIGHT\n"))
     buttonRight.grid(row=0, column=2)
-    
+
     fireLabel = Label(frameButtonsAction, text="ACTION", font=('Arial', 12), width=7)
     fireLabel.grid(row=0, column=0)
     buttonFire = Button(frameButtonsAction, text="FIRE", command=lambda: commandText("FIRE\n"))

@@ -48,7 +48,7 @@ class Drone(RawTurtle):
         self.shape("./image/drone-down.gif")
         self.color("blue")
         self.penup()
-        self.delay = 1
+        self.delay = 0.5
         self.speedup = 0
         self.direction = 'DOWN'
         self.isdead = False
@@ -62,7 +62,7 @@ class Drone(RawTurtle):
         if self.speedup > 0:
             self.speedup -= 1
         if self.speedup <= 0:
-            self.delay = 1
+            self.delay = 0.5
 
     def processmove(self, pos_x, pos_y):
         """
@@ -99,12 +99,11 @@ class Drone(RawTurtle):
             if (treasure.get_x() == pos_x and treasure.get_y()
                     == pos_y and treasure.is_active()):
                 treasure.destroy()
-                # 20s at 0.5 delay, 40 moves basically... and turns are a move
-                # too.
+                # 20s at 0.5 delay, 40 moves basically... and turns are a move too.
                 self.speedup += 40
                 # depending on map it may take longer to collect and return
                 # speedup than to ignore it.
-                self.delay = 0.5
+                self.delay = 0.25
 
         for key in self.keyset:
             if (key.get_x() == pos_x and key.get_y() == pos_y and key.is_active()):
@@ -116,8 +115,7 @@ class Drone(RawTurtle):
             if (door.get_x() == pos_x and door.get_y()
                     == pos_y and door.is_active()):
                 # could check door locked or not and set open etc instead of
-                # destroying door, where destroy for door overrides and changes
-                # icon?
+                # destroying door, where destroy for door overrides and changes icon?
                 print("Door coords " + str(door.get_x()) + " " + str(door.get_y()))
                 if self.keys == 0:
                     print('No keys, locked door')
@@ -160,7 +158,6 @@ class Drone(RawTurtle):
 
     def go_right(self, count=1):
         """_summary_
-
         Args:
             count (int, optional): _description_. Defaults to 1.
         """
@@ -236,7 +233,7 @@ class Drone(RawTurtle):
         self.shape("./image/zombie.gif")
         self.isdead = True
         self.speedup = 0
-        self.delay = 1
+        self.delay = 0.5
 
     def player_dead(self):
         """_summary_
@@ -271,7 +268,6 @@ class Drone(RawTurtle):
 
         return moved
 
-    # TODO - use collision
     def is_collision(self, other):
         """_summary_
 
