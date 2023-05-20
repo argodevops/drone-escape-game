@@ -3,7 +3,7 @@ import time
 from turtle import RawTurtle
 import math
 
-STEP_COUNT = 24
+STEP_COUNT = 26
 
 # Not a fan of Drone (player) knowing locations of everything in maze and
 # deciding himself what happens; seems backwards.
@@ -40,6 +40,7 @@ class Drone(RawTurtle):
         self.treasures = treasures
         self.destructibles = destructibles
         self.lazers = lazers
+        self.score = 0
 
     def reset(self):
         """
@@ -54,6 +55,7 @@ class Drone(RawTurtle):
         self.isdead = False
         self.keys = 0
         self.haslaser = False
+        self.score = 0
 
     def process_speedup(self):
         """
@@ -80,6 +82,8 @@ class Drone(RawTurtle):
         if (pos_x, pos_y) in self.walls:
             return False
         time.sleep(self.delay)
+        self.score += 1
+        print(self.score)
         # this is going to be messy... but make it work first and foremost, refactor later.
         # potential refactor, just stash ALL into one collection of map objects
         # and then act on type?
@@ -88,6 +92,7 @@ class Drone(RawTurtle):
             if (lazer.get_x() == pos_x and lazer.get_y() == pos_y and lazer.is_active()):
                 self.haslaser = True
                 lazer.destroy()
+                self.score += 10
 
         # ran into destructible wall?
         for destructible in self.destructibles:
@@ -99,17 +104,19 @@ class Drone(RawTurtle):
             if (treasure.get_x() == pos_x and treasure.get_y()
                     == pos_y and treasure.is_active()):
                 treasure.destroy()
-                # 20s at 0.5 delay, 40 moves basically... and turns are a move too.
-                self.speedup += 40
+                # 20s at 0.5 delay, 10 moves basically... and turns are a move too.
+                self.speedup += 10
                 # depending on map it may take longer to collect and return
                 # speedup than to ignore it.
                 self.delay = 0.25
+                self.score += 10
 
         for key in self.keyset:
             if (key.get_x() == pos_x and key.get_y() == pos_y and key.is_active()):
                 print("Key coords " + str(key.get_x()) + " " + str(key.get_y()))
                 self.keys += 1
                 key.destroy()
+                self.score += 10
 
         for door in self.doors:
             if (door.get_x() == pos_x and door.get_y()
@@ -124,6 +131,7 @@ class Drone(RawTurtle):
                 print("Have" + str(self.keys) + " available, using one")
                 self.keys -= 1
                 door.destroy()
+                self.score += 10
         # continue on!
         self.goto(pos_x, pos_y)
         return True
@@ -169,23 +177,43 @@ class Drone(RawTurtle):
         """
         Shoots block
         """
-        if not self.haslaser:
-            return
+        print('Shooting now!')
         blockx = self.xcor()
         blocky = self.ycor()
         if self.direction == "UP":
-            blocky += 24
+            blocky += 26
         elif self.direction == "DOWN":
-            blocky -= 24
+            blocky -= 26
         elif self.direction == "RIGHT":
-            blockx += 24
+            blockx += 26
         elif self.direction == "LEFT":
-            blockx -= 24
+            blockx -= 26
 
         for destructible in self.destructibles:
             if (blockx == destructible.get_x() and blocky ==
                     destructible.get_y() and destructible.is_active()):
                 destructible.destroy()
+
+                next_blockx = blockx + 0
+                next_blocky = blocky + 0
+                if self.direction == "UP":
+                    next_blocky = blocky + STEP_COUNT
+                elif self.direction == "DOWN":
+                    next_blocky = blocky - STEP_COUNT
+                elif self.direction == "RIGHT":
+                    next_blockx = blockx + STEP_COUNT
+                elif self.direction == "LEFT":
+                    next_blockx = blockx - STEP_COUNT
+
+                keep_lazer = False
+                for destructible in self.destructibles:
+                    if (next_blockx == destructible.get_x() and next_blocky ==
+                        destructible.get_y() and destructible.is_active()):
+                        keep_lazer = True
+                        print("Next block is des wall, keeping lazer")
+                        break
+                if not keep_lazer:
+                    self.haslaser = False
 
     def turn(self, turn_direction):
         """_summary_
@@ -234,6 +262,7 @@ class Drone(RawTurtle):
         self.isdead = True
         self.speedup = 0
         self.delay = 0.5
+        self.score = 0
 
     def player_dead(self):
         """_summary_

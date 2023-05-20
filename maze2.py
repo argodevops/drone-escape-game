@@ -4,8 +4,8 @@ from tkinter import *
 from tkinter import scrolledtext
 from tkinter.messagebox import askyesno
 import threading
-import json
 import re
+import json
 import random
 from numpy import array
 from drone import Drone
@@ -365,7 +365,6 @@ def wingame():
     turtle.write("YOU WIN!", align="left", font=("Courier", 110))
     turtle.goto(2000, 2000)
     messages.win(player.score)
-    player.score = 0
 
 # Uses global player x/y that's set on the creation of maze to move player to maze start.
 # Calls the respawn method on every other turtle (could create on Drone... If it retaind its original xy)
